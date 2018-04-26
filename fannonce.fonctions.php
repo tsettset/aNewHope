@@ -32,106 +32,115 @@ function getListPaysOption($selectedPays){
 
 
 
-function checkAnnonce($post){
+function checkAnnonce($post, $files){
   //fonction qui nettoie et valide les input passes dans le $post
   //renvoie un tableau contenant les variables nettoyees et les index :
   //          - 'message' contient les messages d'erreur
   //          - 'valide' contient 1 si le tableau peut etre enregistre dans la bdd, 0 sinon
+  //debug($post);
   extract($post);
   $tab = array();
   $tab['message'] = '';
   $tab['valide'] = 1;
   //---------------- Titre annonce ------------
-  $titre = htmlspecialchars($titre);
-  $tab['titre'] = $titre;
-  if (strlen($titre) > 255){
-    $tab['message'] .= 'Titre de l\'annonce trop long <br>';
-    $tab['valide'] = 0;
-  }
-  elseif (strlen($titre) < 1){
+  if (isset($titre)){
+    $titre = htmlspecialchars($titre);
+    $tab['titre'] = $titre;
+    if (strlen($titre) > 255){
+      $tab['message'] .= 'Titre de l\'annonce trop long <br>';
+      $tab['valide'] = 0;
+    }
+    elseif (strlen($titre) < 1){
+      $tab['message'] .= 'Le titre de l\'annonce ne peut pas etre vide<br>';
+      $tab['valide'] = 0;
+    }
+  } else {
     $tab['message'] .= 'Le titre de l\'annonce ne peut pas etre vide<br>';
     $tab['valide'] = 0;
   }
 
   //---------------- Description courte ------------
-  $description_courte = htmlspecialchars($description_courte);
-  $tab['description_courte'] = $description_courte;
-  if (strlen($description_courte) > 255){
-    $tab['message'] .= 'Description courte de l\'annonce trop longue <br>';
-    $tab['valide'] = 0;
+  if (isset($description_courte)){
+    $description_courte = htmlspecialchars($description_courte);
+    $tab['description_courte'] = $description_courte;
+    if (strlen($description_courte) > 255){
+      $tab['message'] .= 'Description courte de l\'annonce trop longue <br>';
+      $tab['valide'] = 0;
+    }
   }
 
   //---------------- Description longue ------------
-  $description_longue = htmlspecialchars($description_longue);
-  $tab['description_longue'] = $description_longue;
+  if (isset($description_longue)){
+    $description_longue = htmlspecialchars($description_longue);
+    $tab['description_longue'] = $description_longue;
+  }
 
   //---------------- Prix ------------
-  $tab['prix'] = $prix;
-  if (!is_numeric($prix)){
-    $tab['valide'] = 0;
-    $tab['message'] .= 'Le prix entre n\'est pas un chiffre.<br>';
+  if (isset($prix)){
+    $tab['prix'] = $prix;
+    if (!is_numeric($prix)){
+      $tab['valide'] = 0;
+      $tab['message'] .= 'Le prix entre n\'est pas un chiffre.<br>';
+    }
   }
 
   //---------------- Selection categorie ------------
-  $tab['categorie'] = $categorie;
-  if ($categorie == 'na') {
-    $tab['message'] .= 'Veuillez selectionner une categorie<br>';
-    $tab['valide'] = 0;
+  if (isset($categorie)){
+    $tab['categorie'] = $categorie;
+    if ($categorie == 'na') {
+      $tab['message'] .= 'Veuillez selectionner une categorie<br>';
+      $tab['valide'] = 0;
+    }
   }
 
 
   //---------------- Photo ------------
-  for ($i=1;$i<6;$i++){
+  /*for ($i=1;$i<6;$i++){
     $nomPhoto = 'photo'.$i;
     if(!empty($_FILES['$nomPhoto']['name'])){
       echo 'dans le if photo';
-      $tab['$nomPhoto'] = htmlspecialchars($_FILES['$nomPhoto']['name']);
-      if (strlen($tab['upload_photo']) > 50){
-        $tab['message'] .= 'Nom de fichier trop long veuillez renommer<br>';
-        $tab['valide'] = false;
-      }
-    } else{echo $i.' : PAS DANS LE IF !!!';}
-  }
+    } else{echo $nomPhoto.' : PAS DANS LE IF !!! ';}
+  }*/
 
 
   //---------------- Adresse annonce------------
-  $addresse = htmlspecialchars($addresse);
-  $tab['addresse'] = $addresse;
-  if (strlen($addresse) > 50){
-    $tab['message'] .= 'Adresse l\'annonce trop longue <br>';
-    $tab['valide'] = 0;
+  if (isset($addresse)){
+    $addresse = htmlspecialchars($addresse);
+    $tab['addresse'] = $addresse;
+    if (strlen($addresse) > 50){
+      $tab['message'] .= 'Adresse l\'annonce trop longue <br>';
+      $tab['valide'] = 0;
+    }
   }
 
   //---------------- Ville annonce------------
-  $ville = htmlspecialchars($ville);
-  $tab['ville'] = $ville;
-  if (strlen($ville) > 20){
-    $tab['message'] .= 'Ville de l\'annonce trop longue <br>';
-    $tab['valide'] = 0;
-  }
-  elseif (strlen($ville) < 1){
-    $tab['message'] .= 'La ville de l\'annonce ne peut pas etre vide<br>';
-    $tab['valide'] = 0;
+  if (isset($ville)){
+    $ville = htmlspecialchars($ville);
+    $tab['ville'] = $ville;
+    if (strlen($ville) > 20){
+      $tab['message'] .= 'Ville de l\'annonce trop longue <br>';
+      $tab['valide'] = 0;
+    }
   }
 
   //---------------- CP annonce------------
-  $code_postal = htmlspecialchars($code_postal);
-  $tab['code_postal'] = $code_postal;
-  if (strlen($code_postal) > 5){
-    $tab['message'] .= 'Code Postal de l\'annonce trop long <br>';
-    $tab['valide'] = 0;
-  }
-  elseif (strlen($code_postal) < 1){
-    $tab['message'] .= 'Le code postal de l\'annonce ne peut pas etre vide<br>';
-    $tab['valide'] = 0;
+  if (isset($code_postal)){
+    $code_postal = htmlspecialchars($code_postal);
+    $tab['code_postal'] = $code_postal;
+    if (strlen($code_postal) > 5){
+      $tab['message'] .= 'Code Postal de l\'annonce trop long <br>';
+      $tab['valide'] = 0;
+    }
   }
 
   //---------------- Pays annonce------------
-  $pays = htmlspecialchars($pays);
-  $tab['pays'] = $pays;
-  if (strlen($pays) > 20){
-    $tab['message'] .= 'Pays de l\'annonce trop long <br>';
-    $tab['valide'] = 0;
+  if (isset($pays)){
+    $pays = htmlspecialchars($pays);
+    $tab['pays'] = $pays;
+    if (strlen($pays) > 20){
+      $tab['message'] .= 'Pays de l\'annonce trop long <br>';
+      $tab['valide'] = 0;
+    }
   }
   return $tab;
 }// --- fin checkAnnonce()
