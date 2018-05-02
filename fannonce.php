@@ -4,27 +4,87 @@ require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('fannonce.fonctions.php');
 $check = array();
-$check['valide'] = 0;
-$check['message'] = '';
+$annonceAModif = array();
+$check['valide'] = -1;//on init a -1 pour le premier passage afin de ne pas trigger les messages d'erreur
+$check['message'] = '';//on init a vide pour ne pas trigger les messages
+$check['status'] = '';//pour savoir l'etat de la page c = creation, m = modification, r = enregistrement effectue -> redirection proposee
+$check['titreDePage'] = 'Deposer une annonce';
 
-$post = array();
+if (isset($_GET['action']) && !empty($_GET['action'])){
+  switch ($_GET['action']) {
+
+    case 'c':
+    $check['status'] = 'c';
+    break;
+
+    case 'm':
+    $check['titreDePage'] = 'Modifier une annonce';
+    $check['status'] = 'm';
+    if (isset($_GET['annonce']) && !empty($_GET['annonce'])) {
+      $annonceAModif = getIdAnnonce($_GET['annonce']);
+      if (empty($annonceAModif)){
+        $check['valide'] = 0;
+      } else {
+        $check = getAnnonce($annonceAModif, $check);
+      }
+    }else{
+      degage();
+    }
+    break;
+
+    case 'r':
+    $check['status'] = 'r';
+    break;
+
+    default:
+    degage();
+    break;
+  }
+} else {degage();}
+
+$post = array();//on cree des tableaux vides pour envoyer des valeurs meme vides a checkannonce()
 $files = array();
 
-if (isset($_POST) && !empty($_POST)){
-  debug($_POST);
-  $post = $_POST;
-}
 if (isset($_FILES) && !empty($_FILES)){
-  debug ($_FILES);
   $files = $_FILES;
 }
-
-$check = checkAnnonce($post, $files);
-if ($check['valide'] == 1){
-
+if (isset($_POST) && !empty($_POST)){
+  $post = $_POST;
 }
+//on assigne les donnees postees si elles existent
 
-ShowForm($check);
+$check = checkAnnonce($check, $post, $files);//on envoie le tout a checkannonce qui nettoie et valide les donnees
+//debug($check);
+
+if ($check['valide'] == 1){//si on est valide on procede a l'upload des photos et l'insert dans la bdd
+  $photos_bdd = array();
+  if(isset($check['photo'])){
+    for ($i=0; $i < 6; $i++ ){
+      if( isset($check['photo'][$i]) && isset($check['photo'][$i]['photo_tmp']) && !empty($check['photo'][$i]['photo_tmp']) ) {
+        uploadPhoto($check['photo'][$i]['photo_tmp'], $check['photo'][$i]['photo_dossier']);
+        $photos_bdd[] = $check['photo'][$i]['photo_bdd'];
+      }
+    }
+  }//fin isset check-photo
+  if ($_GET['action'] == 'c'){
+    $check['id_annonce'] = insertionAnnonce($check, $photos_bdd);//Envoi vers la bdd
+  }
+  if ($_GET['action'] == 'm'){
+    //$check['id_annonce'] = modifAnnonce($check, $photos_bdd);//Envoi vers la bdd
+    debug($check);
+    debug($photos_bdd);
+  }
+  $check['status'] = 'r';//affiche le menu de redirection
+
+}else{//sinon on vide $_POST et $_FILES pour eviter certains comportements inattendus. On utilisera les donnees dans check pour preremplir les champs
+  if (isset($_FILES)) unset($_FILES);
+  if (isset($_POST)) unset($_POST);
+  if ($check['status'] == 'm' && $check['valide'] == 0){
+    $check['message'] .= 'Cette annonce n\'existe pas.<br>';
+  }
+}
+//debug($check);
+ShowForm($check);//affiche la page
 ?>
 <script>
 $(document).ready(function(){
@@ -42,9 +102,9 @@ $(document).ready(function(){
 });
 
 function showVilles(){
-  ville = '<?php echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
+  var ville = '<?php echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
   var params = 'pays=';
-  pays_selected = '';
+  var pays_selected = '';
   pays_selected = $('#pays').find(':selected').val();
   if (pays_selected){
     params += pays_selected;
@@ -56,6 +116,7 @@ function showVilles(){
     }
   },'json');
 }
+
 </script>
 
 <?php
@@ -64,32 +125,41 @@ require_once('footer.php');
 
 //----------- Fonctions
 function ShowForm($check){?>
-  <form method="post" action="" enctype="multipart/form-data" name="new_annonce" id="new_annonce">
-    <div class="container">
-      <div class="row" style="padding-top:10px">
-        <div class="col-md-8 col-md-offset-2 text-center">
-          <h1>Deposer une annonce</h1>
-        </div>
-      </div><!-- row -->
 
-      <?php
-      //debug ($check);
-      if ( ($check['message'] !== '') && ($check['valide']==0) ) {
-        echo '<div class="row">';
-        echo '<div class="col-xs-10 col-xs-offset-1 alert alert-danger">';
-        echo $check['message'];
-        echo '</div>';
-        echo '</div>';
-      } elseif ($check['valide'] == 1){
-        echo '<div class="row">';
-        echo '<div class="col-xs-10 col-xs-offset-1 alert alert-success">';
-        echo 'Enregistrement en cours...';
-        echo '</div>';
-        echo '</div>';
-      }
-      //debug($check);
-      ?>
+  <div class="container">
+    <div class="row" style="padding-top:10px">
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <h1><?= $check['titreDePage']; ?></h1>
+      </div>
+    </div><!-- row -->
 
+    <?php
+    //debug ($check);
+    if ( ($check['message'] !== '') && ($check['valide']==0) ) {
+      echo '<div class="row">';
+      echo '<div class="col-xs-10 col-xs-offset-1 alert alert-danger">';
+      echo '<p>';
+      echo $check['message'];
+      echo '</p>';
+      echo '</div>';
+      echo '</div>';
+    } elseif ($check['valide'] == 1){
+      echo '<div class="row">';
+      echo '<div class="col-xs-10 col-xs-offset-1 alert alert-success">';
+      echo '<p>';
+      echo '<h4>Votre annonce a bien ete publiee !</h4>';
+      echo '<ul>';
+      echo '<li><a href="annonce.php?id='.$check['id_annonce'].'" title="fiche annonce">Consulter la fiche de l\'annonce.</a></li>';
+      echo '<li><a href="fannonce.php?action=m&annonce='.$check['id_annonce'].'" title="modifier l\'annonce">Modifier l\'annonce.</a></li>';
+      echo '</ul>';
+      echo '</p>';
+      echo '</div>';
+      echo '</div>';
+    }
+    //debug($check);
+    if ($check['status'] !== 'r'):
+    ?>
+    <form method="post" action="" enctype="multipart/form-data" name="new_annonce" id="new_annonce">
       <div class="form-group text-center ">
         <label for="titre">Titre</label>
         <input type="text" name="titre" id="titre" class="form-control" placeholder="Titre de l'annonce"
@@ -102,7 +172,7 @@ function ShowForm($check){?>
       <div class="row">
         <div class="form-group col-xs-2 col-xs-offset-1">
           <label for="photo1">Photo 1</label>
-          <input type="file" id="photo1" name="photo1" ><br>
+          <input type="file" id="photo1" name="photo1"><br>
         </div>
         <div class="form-group col-xs-2">
           <label for="photo2">Photo 2</label>
@@ -138,7 +208,7 @@ function ShowForm($check){?>
       </div>
       <div class="form-group">
         <label for="prix">Prix</label>
-        <input type="number" name="prix" id="prix" class="form-control" placeholder="Prix figurant dans l'annonce"
+        <input type="float" title="entrez le prix avec un . pour les decimales " name="prix" id="prix" class="form-control" placeholder="Prix figurant dans l'annonce"
         <?php if (isset($check['prix']) && ($check['prix']) !== '' ){
           echo 'value = "'.$check['prix'].'"';
         }?>>
@@ -165,10 +235,10 @@ function ShowForm($check){?>
         </div>
       </div>
       <div class="form-group">
-        <label for="addresse">Addresse</label>
-        <textarea name="addresse" id="addresse" class="form-control" placeholder="Addresse figurant dans l'annonce"><?php
-        if ( isset($check['addresse']) && ($check['addresse'] !== '')){
-          echo $check['addresse'];
+        <label for="adresse">Adresse</label>
+        <textarea name="adresse" id="adresse" class="form-control" placeholder="Adresse figurant dans l'annonce"><?php
+        if ( isset($check['adresse']) && ($check['adresse'] !== '')){
+          echo $check['adresse'];
         }
         ?></textarea>
       </div>
@@ -186,4 +256,5 @@ function ShowForm($check){?>
     <div class="row" style="min-height:15px"></div>
   </form>
   <?php
+  endif;
 }

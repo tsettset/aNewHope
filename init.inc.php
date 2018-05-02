@@ -27,18 +27,18 @@ try{
 
 //-------------------- CHEMIN
 
-define("RACINE_SITE", $_SERVER['DOCUMENT_ROOT']. "/TROC/");
+define("RACINE_SITE", $_SERVER['DOCUMENT_ROOT']. "/aNewHope/");
 /* cette constante retourne le chemin physique du dossier boutique sur le serveur
 Lors de l'enregistrement d'images / photos, nous aurons besoin du chemin complet du dossier photo pour enregistrer la photo */
 
-define("URL", 'http://localhost/TROC/');
+define("URL", 'http://localhost/aNewHope/');
 
 //cette constante nous servira à enregistrer l'URL d'une photo / image dans la BDD, on ne conserve jamais la photo elle même, ce serait trop lourd pour la BDD
 
 //---------- VARIABLE
 
 $content = '';
-define("SITENAME", 'Troc');//nom du site qui sera utilise sur les pages dans le title
+define("SITENAME", 'A new hope');//nom du site qui sera utilise sur les pages dans le title
 
 //---------------REDIRIGER LA PAGE
 

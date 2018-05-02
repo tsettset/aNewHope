@@ -8,8 +8,8 @@ if (isset($_GET['action']) && $_GET['action']=='getvilles'){
   $retour['valide'] = 1;
   $retour['optionList']='';
   if (isset($_POST['pays']) && isset($_POST['ville'])){
-    $pays_selectionne = htmlspecialchars($_POST['pays']);
-    $ville_selectionnee = htmlspecialchars($_POST['ville']);
+    $pays_selectionne = htmlspecialchars($_POST['pays'], ENT_QUOTES);
+    $ville_selectionnee = htmlspecialchars($_POST['ville'], ENT_QUOTES);
     $retour['optionList'] = getListVilleSelect($pays_selectionne, $ville_selectionnee);
     echo json_encode($retour);
   }else $retour['valide'] = 0;
