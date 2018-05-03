@@ -25,13 +25,15 @@ function internauteEstConnecte(){
   //cette fonction m'indique si le membre est connecte
 
 
-  if(!isset($_SESSION['donnees'])){ // si session membre n'est pas defini, cela veut dire que l'internaute n'est pas passe par la page inscription
+  if(!isset($_SESSION['id_membre'])){ // si session membre n'est pas defini, cela veut dire que l'internaute n'est pas passe par la page inscription
 
     return false;
     
   }else{
 
     return true;
+   
+    
   }
 }
 //------------------------------------------------------------------
