@@ -49,3 +49,4 @@ $extra = 'boutique.php';*/
 //------------
 
 //require_once("fonctions.inc.php");
+//test
