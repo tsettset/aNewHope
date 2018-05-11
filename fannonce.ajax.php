@@ -40,7 +40,7 @@ function getListVilleSelect($pays, $selectedVille){
   global $bdd;
 
   $villeHTML = '<select class="form-control" name="ville" id="ville">';
-  $req_ville = $bdd->prepare("SELECT * FROM ville WHERE id_pays = :pays");
+  $req_ville = $bdd->prepare("SELECT * FROM ville WHERE pays_id = :pays");
   $req_ville->bindValue(':pays', $pays, PDO::PARAM_INT);
   $req_ville->execute();
   $liste_ville = $req_ville->fetchAll(PDO::FETCH_OBJ);
@@ -49,7 +49,7 @@ function getListVilleSelect($pays, $selectedVille){
     if ($selectedVille == $value->id_ville) {
       $villeHTML .='selected';
     }
-    $villeHTML .='>'.$value->nom.'</option>';
+    $villeHTML .='>'.$value->nom_ville.'</option>';
   }
   $villeHTML .='</select>';
   return $villeHTML;

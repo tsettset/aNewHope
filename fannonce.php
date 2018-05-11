@@ -107,6 +107,7 @@ $(document).ready(function(){
   }
   //on attache un event sur le <select pays> : charger la liste des villes quand on change de pays
   $('#pays').on('change',function(event){
+    console.log('bluebabba');
     showVilles();
   });
 
@@ -121,7 +122,9 @@ function showVilles(){
     params += pays_selected;
   }
   params += '&ville='+ville;
+  console.log(params);
   $.post('fannonce.ajax.php?action=getvilles', params, function(valeurRetour){
+    console.log('greenbaba');
     if (valeurRetour.valide == 1){
       $('#ville_select').html(valeurRetour.optionList);
     }

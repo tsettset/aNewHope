@@ -1,4 +1,6 @@
-<footer style="background-color : black; height : 50px;">
+
+<div class="container">
+ <footer style="background-color : black; height : 80px;">
 
  <div class="row">
   <div class="col-md-5 col-md-offset-2" style="color : white;">
@@ -12,6 +14,6 @@
   </div>
 
 </footer>
-
+</div>
 </body>
 </html>
