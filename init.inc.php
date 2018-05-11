@@ -14,7 +14,7 @@ catch (Exception $e)
 
 //-------------------- SESSION
 
-  session_start();
+session_start();
 
 
 
@@ -46,3 +46,4 @@ $extra = 'boutique.php';*/
 //require_once("fonctions.inc.php");
 
 
+?>

@@ -46,8 +46,8 @@ if(isset($_POST['inscriSubmit'])){
   <input class="form-control" type="email" name="email" id="email" placeholder="Votre email"><br>
 
   <label for="civilite">Civilite :</label><br>
-  <input type="radio" name="civilite" id="civilite" name="civilite" value="m"> Homme
-  <input type="radio" name="civilite" id="civilite" name="civilite" value="f"> Femme
+  <input type="radio" name="civilite" id="civilite" name="civilite" value="m"> Monsieur
+  <input type="radio" name="civilite" id="civilite" name="civilite" value="f"> Madame
 
   <input type="submit" name="inscriSubmit"  id="inscriSubmit" class="btn btn-info" value="S'inscrire">
 
