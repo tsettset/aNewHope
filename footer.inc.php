@@ -7,10 +7,10 @@
   </div>
   <div class="col-md-4 col-md-offset-1" style="color : white;">
    <br>
-    Le github du site TROC <a href="https://github.com/tsettset/TROC" class="glyphicon glyphicon-share-alt"></a>
+    Le github du site ANH <a href="https://github.com/tsettset/aNewHope" class="glyphicon glyphicon-share-alt"></a>
   </div>
   </div>
- 
+
 </footer>
 
 </body>

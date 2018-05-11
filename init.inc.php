@@ -33,7 +33,7 @@ define("URL", 'http://localhost/aNewHope/');
 //---------- VARIABLE
 
 $content = '';
-define("SITENAME", 'aNewHope');//nom du site qui sera utilise sur les pages dans le title
+define("SITENAME", 'A new hope');//nom du site qui sera utilise sur les pages dans le title
 
 //---------------REDIRIGER LA PAGE
 

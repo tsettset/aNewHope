@@ -1,3 +1,12 @@
 .vertical-align {
     padding-top: 25px;
 }
+.subphoto{
+  font-style: italic;
+  font-size: 0.85 em;
+}
+.segment-annonce .row{
+  border-style: solid;
+  border-color: lightgrey;
+  border-width: thin;
+}
