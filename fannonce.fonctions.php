@@ -1,4 +1,4 @@
-<?php
+ <?php
 function degage(){
   header("Location: katsanscat.php");
 }
@@ -131,7 +131,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
             $i++;
           }while(!empty($photosList['photo'.$i]));
 
-          $req_photos_str = 'UPDATE photo SET photo'.$i.' = \''.$value.'\' WHERE id_photo = :id';          
+          $req_photos_str = 'UPDATE photo SET photo'.$i.' = \''.$value.'\' WHERE id_photo = :id';
           $req_update_photo = $bdd->prepare($req_photos_str);
           $req_update_photo->bindValue(':id', $id_photos, PDO::PARAM_STR);
           $req_update_photo->execute();
@@ -223,6 +223,11 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         if (!is_numeric($prix)){
           $tab['valide'] = 0;
           $tab['message'] .= 'Le prix entre n\'est pas un chiffre.<br>';
+        } else {
+          if ( $prix > 99999){
+            $tab['valide'] = 0;
+            $tab['message'] .= 'Nous n\'autorisons pas des annonces au prix superieur a 99999.<br>';
+          }
         }
       }else {
         $tab['message'] .= '';

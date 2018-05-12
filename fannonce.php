@@ -83,15 +83,39 @@ ShowForm($check);//affiche la page
 <script>
 $(document).ready(function(){
 
+  _prefix_img = 'img_';//globale, sera utilisee pour retrouver les id des images
+  _prefix_file = 'file_';//globale, sera utilisee pour retrouver les id de l'interface d'upload de fichier
+  _prefix_suppr = 'suppr_';//globale, sera utilisee pour retrouver les id des liens de suppression
+
+  <?php  for ($i=1; $i < 6 ; $i++) {
+    $indice_photo = 'photo'.$i;
+    echo "var imgId = _prefix_img + `photo` + $i;";
+    echo "var fileUploadId = _prefix_file + 'photo' + $i;";
+    echo "var suppLinkId = _prefix_suppr + 'photo' + $i;";
+
+    if (isset($check[$indice_photo]) && !empty($check[$indice_photo])){
+      echo "$('#'+imgId).show();";
+      echo "$('#'+imgId).attr('src', '".$check[$indice_photo]."');";
+      echo "$('#'+suppLinkId).show();";
+      echo "$('#'+fileUploadId).hide();";
+    } else {
+      echo "$('#'+imgId).hide();";
+      echo "$('#'+suppLinkId).hide();";
+      echo "$('#'+fileUploadId).show();";
+    }
+  }?>
   $('.subphoto').on('click',function(event){//supprime une photo et reload la page
+    console.log(this.id);
     event.preventDefault();
     var id = '<?= isset($check['photo_id']) ? $check['photo_id'] : ''; ?>';
     var params = 'photo=' + this.name + '&photo_id=' + id;
-    $.post('fannonce.ajax.php?action=photosupp', params, function(valeurRetour){
-      var id_annonce = '<?= isset($check['id_annonce']) ? $check['id_annonce'] : ''; ?>';
-      // window.location.replace('fannonce.php?action=m&annonce=' + id_annonce);
-    }
-    ,'json');
+    var imgId = '#' + _prefix_img + this.name;
+    var fileUploadId = '#' + _prefix_file + this.name;
+    var suppLinkId = '#' + _prefix_suppr + this.name;
+    $(imgId).hide();
+    $(suppLinkId).hide();
+    $(fileUploadId).show();
+    $.post('fannonce.ajax.php?action=photosupp', params, function(valeurRetour){},'json');
   });//fin subphoto
 
   var pays_selected = $('#pays').find(':selected').val();
@@ -177,142 +201,111 @@ function ShowForm($check){?>
         <div class="row">
           <div class="form-group col-xs-2 col-xs-offset-1">
             <label for="photo1">Photo 1</label>
-            <?php
-            if (isset($check['photo1']) && !empty($check['photo1'])){?>
-              <img src="<?=$check['photo1']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <a href="" class="subphoto" name="photo1" >Supprimer cette photo</a>
-              <?php
-            }else{?>
-              <input type="file" id="photo1" name="photo1" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo1">
+            <br>
+            <a href="" class="subphoto" name="photo1" id="suppr_photo1" >Supprimer cette photo</a>
+            <input type="file" name="photo1" id="file_photo1">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo2">Photo 2</label>
-            <?php
-            if (isset($check['photo2']) && !empty($check['photo2'])) {?>
-              <img src="<?=$check['photo2']?>" alt="photo de l'annonce" class="img-responsive">
-
-              <br>
-              <a href="" class="subphoto" name="photo2" >Supprimer cette photo</a>
-              <?php
-            }else {?>
-              <input type="file" id="photo2" name="photo2" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo2">
+            <br>
+            <a href="" class="subphoto" name="photo2" id="suppr_photo2" >Supprimer cette photo</a>
+            <input type="file" name="photo2" id="file_photo2">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo3">Photo 3</label>
-            <?php
-            if (isset($check['photo3']) && !empty($check['photo3'])){?>
-              <img src="<?=$check['photo3']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <a href="" class="subphoto" name="photo#">Supprimer cette photo</a>
-              <?php
-            }else {?>
-              <input type="file" id="photo3" name="photo3" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo3">
+            <br>
+            <a href="" class="subphoto" name="photo3" id="suppr_photo3" >Supprimer cette photo</a>
+            <input type="file" name="photo3" id="file_photo3">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo4">Photo 4</label>
-            <?php
-            if (isset($check['photo4']) && !empty($check['photo4'])){?>
-              <img src="<?=$check['photo4']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <a href="" class="subphoto" name="photo4" >Supprimer cette photo</a>
-              <?php
-            } else {?>
-              <input type="file" id="photo4" name="photo4" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo4">
+            <br>
+            <a href="" class="subphoto" name="photo4" id="suppr_photo4" >Supprimer cette photo</a>
+            <input type="file" name="photo4" id="file_photo4">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo5">Photo 5</label>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo5">
+            <br>
+            <a href="" class="subphoto" name="photo5" id="suppr_photo5" >Supprimer cette photo</a>
+            <input type="file" name="photo5" id="file_photo5">
+            <br>
+          </div>
+        </div><!-- row -->
+        <div class="form-group">
+          <label for="description_courte">Description Courte</label>
+          <textarea name="description_courte" id="description_courte" class="form-control" placeholder="Description courte de votre annonce"><?php
+          if ( isset($check['description_courte']) && ($check['description_courte'] !== '')){
+            echo $check['description_courte'];
+          }?></textarea>
+        </div>
+        <div class="form-group">
+          <label for="description_longue">Description Longue</label>
+          <textarea name="description_longue" id="description_longue" class="form-control" placeholder="Description longue de votre annonce"><?php
+          if ( isset($check['description_longue']) && ($check['description_longue'] !== '')){
+            echo $check['description_longue'];
+          }
+          ?></textarea>
+        </div>
+        <div class="form-group">
+          <label for="prix">Prix</label>
+          <input type="float" title="entrez le prix avec un . pour les decimales " name="prix" id="prix" class="form-control" placeholder="Prix figurant dans l'annonce"
+          <?php if (isset($check['prix']) && ($check['prix']) !== '' ){
+            echo 'value = "'.$check['prix'].'"';
+          }?>>
+        </div>
+        <div class="form-group">
+          <label for="categorie_id">Categorie</label>
+          <select class="form-control" name="categorie_id" id="categorie_id">
             <?php
-            if (isset($check['photo5']) && !empty($check['photo5'])){?>
-              <img src="<?=$check['photo5']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <a href="" class="subphoto" name="photo5" >Supprimer cette photo</a>
-              <?php
-            }else{?>
-              <input type="file" id="photo5" name="photo5" ><br>
-              <?php
-            }
+            echo (isset($check['categorie_id'])) ? getListCategoriesOption($check['categorie_id']) : getListCategoriesOption(0);
             ?>
-            </div>
-            </div><!-- row -->
-            <div class="form-group">
-              <label for="description_courte">Description Courte</label>
-              <textarea name="description_courte" id="description_courte" class="form-control" placeholder="Description courte de votre annonce"><?php
-                if ( isset($check['description_courte']) && ($check['description_courte'] !== '')){
-                  echo $check['description_courte'];
-                }?></textarea>
-                </div>
-                <div class="form-group">
-                <label for="description_longue">Description Longue</label>
-                <textarea name="description_longue" id="description_longue" class="form-control" placeholder="Description longue de votre annonce"><?php
-                  if ( isset($check['description_longue']) && ($check['description_longue'] !== '')){
-                    echo $check['description_longue'];
-                  }
-                  ?></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="prix">Prix</label>
-                    <input type="float" title="entrez le prix avec un . pour les decimales " name="prix" id="prix" class="form-control" placeholder="Prix figurant dans l'annonce"
-                    <?php if (isset($check['prix']) && ($check['prix']) !== '' ){
-                      echo 'value = "'.$check['prix'].'"';
-                    }?>>
-                    </div>
-                    <div class="form-group">
-                      <label for="categorie_id">Categorie</label>
-                      <select class="form-control" name="categorie_id" id="categorie_id">
-                        <?php
-                        echo (isset($check['categorie_id'])) ? getListCategoriesOption($check['categorie_id']) : getListCategoriesOption(0);
-                        ?>
-                      </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="pays">Pays</label>
-                        <select class="form-control" name="pays" id="pays">
-                          <?php
-                          echo (isset($check['pays'])) ? getListPaysOption($check['pays']) : getListPaysOption(0);
-                          ?>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="ville">Ville</label>
-                        <div id="ville_select">
-                        </div>
-                        </div>
-                        <div class="form-group">
-                        <label for="adresse">Adresse</label>
-                        <textarea name="adresse" id="adresse" class="form-control" placeholder="Adresse figurant dans l'annonce"><?php
-                          if ( isset($check['adresse']) && ($check['adresse'] !== '')){
-                            echo $check['adresse'];
-                          }
-                          ?></textarea>
-                          </div>
-                          <div class="form-group">
-                          <label for="code_postal">Code Postal</label>
-                          <input type="number" name="code_postal" id="code_postal" class="form-control" placeholder="Code postal figurant dans l'annonce"
-                          <?php
-                          if ( (isset($check['cp'])) && ($check['cp'] !== '') ){
-                            echo 'value = "'.$check['cp'].'"';
-                          }?>
-                          >
-                          </div>
-                          <button type="submit" name="save_form" id="save_form" class="btn btn-primary btn-lg btn-block">Enregistrer</button>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pays">Pays</label>
+          <select class="form-control" name="pays" id="pays">
+            <?php
+            echo (isset($check['pays'])) ? getListPaysOption($check['pays']) : getListPaysOption(0);
+            ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ville">Ville</label>
+          <div id="ville_select">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="adresse">Adresse</label>
+          <textarea name="adresse" id="adresse" class="form-control" placeholder="Adresse figurant dans l'annonce"><?php
+          if ( isset($check['adresse']) && ($check['adresse'] !== '')){
+            echo $check['adresse'];
+          }
+          ?></textarea>
+        </div>
+        <div class="form-group">
+          <label for="code_postal">Code Postal</label>
+          <input type="number" name="code_postal" id="code_postal" class="form-control" placeholder="Code postal figurant dans l'annonce"
+          <?php
+          if ( (isset($check['cp'])) && ($check['cp'] !== '') ){
+            echo 'value = "'.$check['cp'].'"';
+          }?>
+          >
+        </div>
+        <button type="submit" name="save_form" id="save_form" class="btn btn-primary btn-lg btn-block">Enregistrer</button>
 
-                        </form>
-                        <?php
-                        endif;?>
-                      </div><!-- container-fluid -->
-                      <div class="row" style="min-height:15px"></div>
-                      <?php
-                    }?>
+      </form>
+      <?php
+    endif;?>
+  </div><!-- container-fluid -->
+  <div class="row" style="min-height:15px"></div>
+  <?php
+}?>
