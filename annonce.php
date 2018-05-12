@@ -3,11 +3,13 @@ require_once('init.inc.php');
 require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('annonce.fonctions.php');
+require_once('navbar.php');
 
 if(isset($_GET['id']) && !empty($_GET['id'])){
   $annonce = getAnnonce(intval($_GET['id']));
   debug($annonce);
 }else echo 'nope';
+debug($_SESSION);
 showForm($annonce);
 
 require_once('footer.php');
