@@ -3,12 +3,18 @@ require_once('init.inc.php');
 require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('fannonce.fonctions.php');
+require_once('navbar.php');
 $check = array();
 $annonceAModif = array();
 $check['valide'] = -1;//on init a -1 pour le premier passage afin de ne pas trigger les messages d'erreur
 $check['message'] = '';//on init a vide pour ne pas trigger les messages
 $check['status'] = '';//pour savoir l'etat de la page c = creation, m = modification, r = enregistrement effectue -> redirection proposee
 $check['titreDePage'] = 'Deposer une annonce';
+// debug ($_SESSION);
+
+if (isset($_SESSION['id_membre'])){
+  $check['id_membre'] = $_SESSION['id_membre'];
+} else degage();
 
 if (isset($_GET['action']) && !empty($_GET['action'])){
   switch ($_GET['action']) {
@@ -26,6 +32,9 @@ if (isset($_GET['action']) && !empty($_GET['action'])){
         $check['valide'] = 0;
       } else {
         $check = getAnnonce($annonceAModif, $check);
+        if ($check['id_membre'] !== $check['membre_id']) {
+          degage();
+        }
       }
     }else{
       degage();

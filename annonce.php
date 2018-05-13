@@ -7,9 +7,9 @@ require_once('navbar.php');
 
 if(isset($_GET['id']) && !empty($_GET['id'])){
   $annonce = getAnnonce(intval($_GET['id']));
-  debug($annonce);
-}else echo 'nope';
-debug($_SESSION);
+  // debug($annonce);
+}else degage();
+// debug($_SESSION);
 showForm($annonce);
 
 require_once('footer.php');
@@ -23,15 +23,15 @@ function showForm($annonce){
         <h1><?= $annonce['titre']; ?></h1>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xs-8 col-xs-offset-2 text-center">
-        <?php
-        // if (!empty($_SESSION['id_membre'])){ -- TAG ----- A MODIF APRES INTEGRAGTION ---- TAG ----?>
-        <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modif cette annonce</a>
-        <?php// }
-        ?>
+    <?php
+    if (!empty($_SESSION['id_membre']) && $_SESSION['id_membre'] == $annonce['membre_id']){ ?>
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2 text-center">
+          <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modif cette annonce</a>
+        </div>
       </div>
-    </div>
+    <?php }
+    ?>
     <div class="row">
       <div class="col-xs-4 text-right">
         Date de derniere mise a jour :
@@ -202,24 +202,7 @@ function showForm($annonce){
         ?>
       </div>
     </div>
-    <?php if (!empty($annonce['commentaires'])){
-      foreach ($annonce['commentaires'] as $value) {?>
-        <div class="row">
-          <div class="col-xs-2 col-xs-offset-4 text-center">
-            <?php echo getPseudoMembre($value['membre_id']);?>
-          </div>
-          <div class="col-xs-2 text-center">
-            <?php echo $value['date_enregistrement'].'<br>';?>
-          </div>
-
-          <div class="col-xs-8 col-xs-offset-2 text-center">
-            <?php echo $value['commentaire'].'<br>';?>
-          </div>
-        </div>
-        <?php
-      }
-    }?>
-
+    <?php include ('commpi.php'); ?>
   </div>
   <?php
 }

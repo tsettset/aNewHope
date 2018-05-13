@@ -114,7 +114,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         $req_insert->bindValue(':ville', $check['ville'], PDO::PARAM_STR);
         $req_insert->bindValue(':adresse', $check['adresse'], PDO::PARAM_STR);
         $req_insert->bindValue(':cp', $check['code_postal'], PDO::PARAM_INT);
-        //$req_insert->bindValue(':membre_id', '1');/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
+        $req_insert->bindValue(':membre_id', $check['id_membre']);/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
         $req_insert->bindValue(':categorie_id', $check['categorie_id'], PDO::PARAM_INT);
         $req_insert->bindValue(':id_annonce', $check['id_annonce'], PDO::PARAM_STR);
         $req_insert->execute();
