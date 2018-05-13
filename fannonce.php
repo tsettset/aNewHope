@@ -74,6 +74,13 @@ if ($check['valide'] == 1){//si on est valide on procede a l'upload des photos e
   }
   if ($_GET['action'] == 'm'){
     $check['id_annonce'] = modifAnnonce($check, $photos_bdd);//Envoi vers la bdd
+    if ($check['id_annonce'] == 0){
+      $check['valide'] = 0;
+      $check['message'] .= 'Une erreur s\'est produite.<br>';
+      $check['message'] .= '<a href="javascript:history.back(-1);">Retour</a><br>';
+      $check['message'] .= '<a href="fannonce.php?action=c">Deposer une annonce</a><br>';
+    }
+
   }
   $check['status'] = 'r';//affiche le menu de redirection
 

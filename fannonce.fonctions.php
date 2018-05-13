@@ -62,7 +62,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
     }
     $req_insert = $bdd->prepare(
       "INSERT INTO annonce (titre, description_courte, description_longue, prix, pays, ville, adresse, cp, date_enregistrement, membre_id, categorie_id)
-      VALUES (:titre, :description_courte, :description_longue, :prix, :pays, :ville, :adresse, :cp, NOW(), 1, :categorie_id);");
+      VALUES (:titre, :description_courte, :description_longue, :prix, :pays, :ville, :adresse, :cp, NOW(), :membre_id, :categorie_id);");
 
       $req_insert->bindValue(':titre', $check['titre'], PDO::PARAM_STR);
       $req_insert->bindValue(':description_courte', $check['description_courte'], PDO::PARAM_STR);
@@ -73,7 +73,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
       $req_insert->bindValue(':ville', $check['ville'], PDO::PARAM_STR);
       $req_insert->bindValue(':adresse', $check['adresse'], PDO::PARAM_STR);
       $req_insert->bindValue(':cp', $check['code_postal'], PDO::PARAM_INT);
-      //$req_insert->bindValue(':membre_id', '1');/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
+      $req_insert->bindValue(':membre_id', $check['id_membre']);
       $req_insert->bindValue(':categorie_id', $check['categorie_id'], PDO::PARAM_INT);
       $req_insert->execute();
       if (isset($id_photos)){
@@ -102,7 +102,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         adresse = :adresse,
         cp = :cp,
         date_enregistrement = NOW(),
-        membre_id = 1,
+        membre_id = :membre_id,
         categorie_id = :categorie_id
         WHERE id_annonce = :id_annonce ;");
         $req_insert->bindValue(':titre', $check['titre'], PDO::PARAM_STR);
@@ -114,7 +114,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         $req_insert->bindValue(':ville', $check['ville'], PDO::PARAM_STR);
         $req_insert->bindValue(':adresse', $check['adresse'], PDO::PARAM_STR);
         $req_insert->bindValue(':cp', $check['code_postal'], PDO::PARAM_INT);
-        $req_insert->bindValue(':membre_id', $check['id_membre']);/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
+        $req_insert->bindValue(':membre_id', $check['id_membre'], PDO::PARAM_INT);
         $req_insert->bindValue(':categorie_id', $check['categorie_id'], PDO::PARAM_INT);
         $req_insert->bindValue(':id_annonce', $check['id_annonce'], PDO::PARAM_STR);
         $req_insert->execute();
@@ -269,7 +269,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         $adresse = htmlspecialchars($adresse, ENT_QUOTES);
         $tab['adresse'] = $adresse;
         if (strlen($adresse) > 50){
-          $tab['message'] .= 'Adresse l\'annonce trop longue <br>';
+          $tab['message'] .= 'L\'Adresse de l\'annonce est trop longue -- (limite a 50 caracteres) <br>';
           $tab['valide'] = 0;
         }
       }
