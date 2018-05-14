@@ -5,13 +5,17 @@ function degage(){
 
 function getListCategoriesOption($selectedCategorie){//renvoie la liste des pays dans un <select><option>
   global $bdd;
-  $categoriesHTML = '<option value="na">Selectionnez une categorie</option>';
-  $req_categories = $bdd->query("SELECT id_categorie,titre FROM categorie");
+  $categoriesHTML = '<option value="na"';
+  if ($selectedCategorie == 0){
+    $categoriesHTML .= ' selected';
+  }
+  $categoriesHTML .= '>Selectionnez une categorie</option>';
+  $req_categories = $bdd->query("SELECT id_categorie,titre FROM categorie ORDER BY titre ASC");
   $categories = $req_categories->fetchAll(PDO::FETCH_OBJ);
   foreach ($categories as $value) {
     $categoriesHTML .= '<option value="'.$value->id_categorie.'"';
     if ($selectedCategorie == $value->id_categorie){
-      $categoriesHTML .= 'selected';
+      $categoriesHTML .= ' selected';
     }
     $categoriesHTML .= '>'.$value->titre.'</option>';
   }
