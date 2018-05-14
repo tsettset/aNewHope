@@ -4,16 +4,25 @@ require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('annonce.fonctions.php');
 require_once('navbar.php');
+$annonce = array ();
+$comm_msg = '';
 
 if(isset($_GET['id']) && !empty($_GET['id'])){
+
+  if(isset($_POST['post_comment']) && !empty($_POST['post_comment'])){
+    $comm_msg = insertCommentaire($_POST['post_comment'], intval($_GET['id']), $_SESSION['id_membre']);
+  }
+
   $annonce = getAnnonce(intval($_GET['id']));
-  // debug($annonce);
+  if ($annonce == 0){
+    degage();
+  }
+  $annonce['comm_msg'] = $comm_msg;
 }else degage();
-// debug($_SESSION);
+
 showForm($annonce);
 
 require_once('footer.php');
-
 
 function showForm($annonce){
   ?>
@@ -27,7 +36,7 @@ function showForm($annonce){
     if (!empty($_SESSION['id_membre']) && $_SESSION['id_membre'] == $annonce['membre_id']){ ?>
       <div class="row">
         <div class="col-xs-8 col-xs-offset-2 text-center">
-          <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modif cette annonce</a>
+          <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modifier cette annonce</a>
         </div>
       </div>
     <?php }
