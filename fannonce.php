@@ -31,7 +31,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])){
       if (empty($annonceAModif)){
         $check['valide'] = 0;
       } else {
-        $check = getAnnonce($annonceAModif, $check);
+        $check = getAnnonceModif($annonceAModif, $check);
         if ($check['id_membre'] !== $check['membre_id']) {
           degage();
         }

@@ -152,7 +152,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
       return ($annonce['id_annonce']);
     }
 
-    function getAnnonce($id_annonce, $tab){
+    function getAnnonceModif($id_annonce, $tab){
       global $bdd;
       $req_annonce = $bdd->prepare("SELECT * FROM annonce WHERE id_annonce = :id");
       $req_annonce->bindValue(':id', $id_annonce, PDO::PARAM_INT);
