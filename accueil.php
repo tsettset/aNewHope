@@ -75,10 +75,10 @@ if (isset($_POST) && !empty($_POST)){
           <h3>Les annonces selon vos criteres de recherche </h3>
         </div>
         <div class="col-xs-4 col-xs-offset-4">
-          <a href="" id="orderByAlpha">A - Z / Z - A</a>
+          <a href="" id="orderByAlpha">A - Z</a>
         </div>
         <div class="col-xs-4">
-          <a href="" id="orderByDate">Date d'enregistrement Ascendant / Descendant </a>
+          <a href="" id="orderByDate">Date de mise a jour > </a>
         </div>
         <div id="liste_annonces">
           <div class="col-xs-10 col-xs-offset-1 module_recherche">

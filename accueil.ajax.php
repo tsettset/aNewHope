@@ -1,5 +1,11 @@
 <?php
 session_start();
+$_SESSION['recherche']['orderby'] = 'date_enregistrement DESC';
+$_SESSION['recherche']['categorie'] = '';
+$_SESSION['recherche']['pays'] = '';
+$_SESSION['recherche']['ville'] = '';
+$_SESSION['recherche']['prixMini'] = 0;
+$_SESSION['recherche']['prixMax'] = 99999;
 
 if ( isset($_GET['action']) && $_GET['action'] == 'searchAnnonces'){
   if (!isset($_SESSION['cpt'])){
