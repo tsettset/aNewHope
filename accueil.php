@@ -6,7 +6,8 @@ require_once('annonce.fonctions.php');
 require_once('fannonce.fonctions.php');
 require_once('accueil.fonctions.php');
 require_once('navbar.php');
-$_SESSION['cpt'] = 0;
+initRecherche();
+// debug (makeSearch());
 $check = array();
 if (isset($_POST) && !empty($_POST)){
   debug($_POST);
@@ -40,8 +41,8 @@ if (isset($_POST) && !empty($_POST)){
                 if (isset($check['pays'])){
                   echo getListPaysOption($check['pays']);
                 } else {
-                  echo getListPaysOption(1);//par defaut pays 1 qui devrait etre la France..
-                  $check['ville'] = 1;//par defaut ville 1 qui devrait etre Paris.. ICI c'est PARIS, BITCH !
+                  echo getListPaysOption(0);//par defaut pays 1 qui devrait etre la France..
+                  $check['ville'] = 0;//par defaut ville 1 qui devrait etre Paris.. ICI c'est PARIS, BITCH !
                 }
                 ?>
               </select>
@@ -81,8 +82,8 @@ if (isset($_POST) && !empty($_POST)){
           <a href="" id="orderByDate">Date de mise a jour > </a>
         </div>
         <div id="liste_annonces">
-          <div class="col-xs-10 col-xs-offset-1 module_recherche">
-            Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+          <div class="col-xs-10 col-xs-offset-1 module_recherche text-center">
+            <h2>Accueil</h2>
           </div>
         </div>
       </div>
@@ -93,35 +94,38 @@ if (isset($_POST) && !empty($_POST)){
 
 <script>
 $(document).ready(function(){
+
   //--------------Categorie---------------------------------------------------
+  //on attache un event onchange  sur le <select categorie> : charger la liste d'annonces
   $('#categorie_id').on('change',function(){
     params = 'categorie_id=' + $(this).find(':selected').val();
-    console.log( params)
-    $.post('accueil.ajax.php?action=categorie', params, function(valeurRetour){
-      console.log (valeurRetour.valide);
-      if (valeurRetour.valide == 1){
-        console.log(valeurRetour.optionList);
-        $('#liste_annonces').html(valeurRetour.optionList);
-      }
-    },'json');//fin $.post
+    recherche('categorie_id', params);
   });//fin categorie_id.on('change')
+
+  //--------------Pays---------------------------------------------------
+  //on attache un event onchange  sur le <select pays> :
+  // - charger la liste des villes quand on change de pays
+  // - actualiser la recherche d'annonces
+  $('#pays').on('change',function(event){
+    showVilles();
+    params = 'pays_id=' + $(this).find(':selected').val();
+    recherche('pays_id' , params);
+  });//fin pays.on('change')
+
+  //--------------Categorie---------------------------------------------------
+  //on attache un event onchange sur le <select ville> : charger la liste d'annonces
+  $('#ville_select').on('change',function(){
+    params = 'ville=' + $(this).find(':selected').val();
+    recherche('ville', params);
+  });//fin ville.on('change')
+
+
 
   //--------------gestion du formulaire de recherche--------------------------
   $('#form_recherche').on('submit',function(event){
     event.preventDefault();
-    console.log( $(this).serialize() );
     var params = $(this).serialize();
-    $.post('accueil.ajax.php?action=searchAnnonces', params, function(valeurRetour){
-      if (valeurRetour.valide == 1){
-        var divDebut = '<div class="col-xs-10 col-xs-offset-1 text-center module_recherche">';
-        var finale = '';
-        console.log(valeurRetour.optionList);
-        for (var i = 0; i < valeurRetour.optionList.length; i++) {
-          finale += divDebut + valeurRetour.optionList[i] + '</div>';
-        }
-        $('#liste_annonces').html(finale);
-      }
-    },'json');//fin $.post
+    recherche('f',params);
   });//fin $.form_recherche
 
   //--------------FIN gestion du formulaire de recherche----------------------
@@ -132,16 +136,38 @@ $(document).ready(function(){
   //on met dans "var ville" la ville selectionnee pour la reposter en cas de modif
   var ville = '<?php echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
   if (ville == '0'){//si 0 demander d'abord le choix d'un pays
-    $('#ville_select').html('<em><select class="form-control"><option>Selectionnez un pays</option></select></em>');
-  }else if (pays_selected) {//sinon appeler la fonction d'affichage de villes
-    showVilles();
-  }
-  //on attache un event sur le <select pays> : charger la liste des villes quand on change de pays
-  $('#pays').on('change',function(event){
-    showVilles();
-  });
-
+  $('#ville_select').html('<em><select class="form-control"><option value="na">Toutes</option></select></em>');
+}else if (pays_selected) {//sinon appeler la fonction d'affichage de villes
+showVilles();
+}
+ recherche('f','p=na');//on lance une recherche telle quelle au rafrachissement
 });// Fin DR
+
+function recherche(a,p){
+  console.log('params ' + p);
+  $.post('accueil.ajax.php?action='+a , p, function(valeurRetour){
+    var divDebut = '<div class="col-xs-10 col-xs-offset-1 text-center module_recherche">';
+    if (valeurRetour.valide == 1){
+      var finale = formatListeAnnnonces(valeurRetour.liste_annonces);
+      $('#liste_annonces').html(finale);
+    }
+  },'json');//fin $.post
+}
+
+function formatListeAnnnonces(liste){
+  var divDebut = '<div class="col-xs-10 col-xs-offset-1 text-center module_recherche">';
+  var finale = '';
+  if (liste == 0){
+    finale += divDebut + '<em>Pas de resultat</em>' + '</div>';
+  } else {
+    for (var i = 0; i < liste.length; i++) {
+      finale += divDebut + liste[i].id_annonce + '<br>';
+      finale += liste[i].annonce.titre;
+      finale += '</div>';
+    }
+  }
+  return finale;
+}
 
 function showVilles(){
   var ville = '<?php echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
