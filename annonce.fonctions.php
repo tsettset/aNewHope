@@ -5,6 +5,7 @@ function getAnnonce($idAnnonce){
   $req_annonce = $bdd->prepare("SELECT * FROM annonce WHERE id_annonce=:id");
   $req_annonce->bindValue(':id', $idAnnonce, PDO::PARAM_INT);
   $req_annonce->execute();
+  if ($req_annonce->rowCount() == 0) return 0;
   $tab_annonce = $req_annonce->fetch(PDO::FETCH_ASSOC);
 
   if (!empty($tab_annonce['photo_id'])){

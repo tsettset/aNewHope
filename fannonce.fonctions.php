@@ -1,7 +1,4 @@
  <?php
-function degage(){
-  header("Location: katsanscat.php");
-}
 
 function getListCategoriesOption($selectedCategorie){//renvoie la liste des pays dans un <select><option>
   global $bdd;
