@@ -7,6 +7,7 @@ function initRecherche(){
   $_SESSION['recherche']['categorie_id'] = '';
   $_SESSION['recherche']['pays_id'] = '';
   $_SESSION['recherche']['ville'] = '';
+  $_SESSION['recherche']['titre'] = '';
   $_SESSION['recherche']['prixMini'] = 0;
   $_SESSION['recherche']['prixMax'] = 999999;
 }
@@ -35,6 +36,12 @@ function makeSearch(){
     $and = true;
   }
 
+  if ( isset($_SESSION['recherche']['titre']) && !empty($_SESSION['recherche']['titre'])) {
+    if ($and) $requete .= ' AND ';
+    $requete .= 'titre LIKE \'%'.$_SESSION['recherche']['titre'].'%\' ';
+    $and = true;
+  }
+
   if ($and) $requete .= ' AND ';
   $requete .= 'prix > '.$_SESSION['recherche']['prixMini'].' ';
   $requete .= ' AND ';
@@ -47,7 +54,7 @@ function makeSearch(){
   $req_annonces = $bdd->query($requete);
   $annonces = $req_annonces->fetchAll(PDO::FETCH_ASSOC);
 
-  // $annonces[count($annonces)]['id_annonce'] = $requete;
+  $_SESSION['recherche']['requete'] = $requete;
 
   if ($annonces && !empty($annonces)){
     return $annonces;

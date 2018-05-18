@@ -40,6 +40,7 @@ function getListVilleSelect($pays, $selectedVille){
   global $bdd;
 
   $villeHTML = '<select class="form-control" name="ville" id="ville">';
+  $villeHTML .='<option value="na">---</option>';
   $req_ville = $bdd->prepare("SELECT * FROM ville WHERE pays_id = :pays");
   $req_ville->bindValue(':pays', $pays, PDO::PARAM_INT);
   $req_ville->execute();

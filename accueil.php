@@ -1,18 +1,20 @@
 <?php
 require_once('init.inc.php');
+require_once('accueil.fonctions.php');
+initRecherche();
 require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('annonce.fonctions.php');
 require_once('fannonce.fonctions.php');
-require_once('accueil.fonctions.php');
+
 require_once('navbar.php');
-initRecherche();
+
 // debug (makeSearch());
 $check = array();
 if (isset($_POST) && !empty($_POST)){
-  debug($_POST);
+  // debug($_POST);
   $check = laveRecherchePost($_POST);
-  debug($check);
+  // debug($check);
 }
 ?>
 <div class="container">
@@ -55,13 +57,23 @@ if (isset($_POST) && !empty($_POST)){
           </div>
           <div class="col-xs-10 col-xs-offset-1">
             <div class="form-group">
-              <label for="titre">Titre de l'annonce</label>
-              <input type="text" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" value="<?=
-              (isset($check['titre']) && !empty($check['titre'])) ? $check['titre'] : '';
-              ?>">
+              <label for="titre">Titre de l'annonce contient</label>
+              <input type="text" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" />
+            </div>
+            <div id="titre_suggest">
             </div>
           </div>
-          <div class="col-xs-10 col-xs-offset-1">
+          <div class="col-xs-10 col-xs-offset-1" >
+            <div class="form-group">
+              <label for="prix_min">Prix Mini</label>
+              <input type="number" name="prix_min" id="prix_min" title="superieur a 0">
+            </div>
+            <div class="form-group">
+              <label for="prix_max">Prix Max</label>
+              <input type="number" name="prix_max" id="prix_max" title="inferieur a 999999">
+            </div>
+          </div>
+          <div class="col-xs-10 col-xs-offset-1" >
             <div class="form-group">
               <button type="submit" class="btn btn-primary">appliquer ces criteres</button>
             </div>
@@ -70,19 +82,36 @@ if (isset($_POST) && !empty($_POST)){
       </form>
     </div><!--fin module_recherche-->
 
-    <div class="col-xs-8 module_annonces">
+    <div class="col-xs-8">
       <div class="row" >
         <div class="col-xs-10 col-xs-offset-1 text-center">
           <h3>Les annonces selon vos criteres de recherche </h3>
         </div>
-        <div class="col-xs-4 col-xs-offset-4">
-          <a href="" id="orderByAlpha">A - Z</a>
+        <div class="col-xs-5 col-xs-offset-1 text-center">
+          <div class="form-group">
+            <label for="search_param">Selectionnez un parametre de tri</label>
+            <select class="form-control" id="search_param" name="search_param">
+              <option value="date_enregistrement" selected>Date</option>;
+              <option value="titre">Titre</option>
+              <option value="categorie_id">Categorie</option>
+              <option value="pays_id">Pays</option>
+              <option value="ville">Ville</option>
+              <option value="prix">Prix</option>
+            </select>
+          </div>
         </div>
-        <div class="col-xs-4">
-          <a href="" id="orderByDate">Date de mise a jour > </a>
+        <div class="col-xs-5 text-center">
+          <div class="form-group">
+            <label for="sens">Selectionnez un sens de tri</label>
+            <select class="form-control" id="sens" name="sens">
+              <option value="ASC"> Ascendant </option>
+              <option value="DESC"selected> Descendant </option>
+            </select>
+          </div>
         </div>
+
         <div id="liste_annonces">
-          <div class="col-xs-10 col-xs-offset-1 module_recherche text-center">
+          <div class="col-xs-10 col-xs-offset-1 text-center">
             <h2>Accueil</h2>
           </div>
         </div>
@@ -95,10 +124,12 @@ if (isset($_POST) && !empty($_POST)){
 <script>
 $(document).ready(function(){
 
+  //--------------gestion du formulaire de recherche--------------------------
+
   //--------------Categorie---------------------------------------------------
   //on attache un event onchange  sur le <select categorie> : charger la liste d'annonces
   $('#categorie_id').on('change',function(){
-    params = 'categorie_id=' + $(this).find(':selected').val();
+    var params = 'categorie_id=' + $(this).find(':selected').val();
     recherche('categorie_id', params);
   });//fin categorie_id.on('change')
 
@@ -108,50 +139,110 @@ $(document).ready(function(){
   // - actualiser la recherche d'annonces
   $('#pays').on('change',function(event){
     showVilles();
-    params = 'pays_id=' + $(this).find(':selected').val();
+    var params = 'pays_id=' + $(this).find(':selected').val();
     recherche('pays_id' , params);
   });//fin pays.on('change')
 
-  //--------------Categorie---------------------------------------------------
+  //--------------Ville---------------------------------------------------
   //on attache un event onchange sur le <select ville> : charger la liste d'annonces
   $('#ville_select').on('change',function(){
-    params = 'ville=' + $(this).find(':selected').val();
+    var params = 'ville=' + $(this).find(':selected').val();
     recherche('ville', params);
   });//fin ville.on('change')
 
+  //--------------Parametre de tri----------------------------------------------
+  $('#search_param').on('change',function(){
+    var params = 'orderby=' + $(this).find(':selected').val();
+    recherche('orderby', params);
+  });//fin search_param.on('change')
 
+  //--------------Sens de tri--------------------------------------------------
+  $('#sens').on('change',function(){
+    var params = 'sens=' + $(this).find(':selected').val();
+    recherche('sens', params);
+  });//fin sens.on('change')
 
-  //--------------gestion du formulaire de recherche--------------------------
+  //--------------Gestion Titre-------------------------------------------------
+  $('#titre').on('input',function(){
+    var params = 'titre=' + $(this).val();
+    if (params.length - 6 > 2){
+      recherche('titre', params);
+      populateTitre();
+    } else {
+      $('#titre_suggest').html('');
+    }
+
+  });//fin titre.on('input')
+
+  //--------------Prix Mini--------------------------------------------------
+  $('#prix_min').on('input',function(){
+    var params = 'prix_min=' + $(this).val();
+    recherche('prix_min', params);
+  });//fin prix_min.on('change')
+
+  //--------------Prix Max--------------------------------------------------
+  $('#prix_max').on('input',function(){
+    var params = 'prix_max=' + $(this).val();
+    recherche('prix_max', params);
+  });//fin prix_min.on('change')
+
+  //--------------formulaire de recherche complet--------------------------
   $('#form_recherche').on('submit',function(event){
     event.preventDefault();
-    var params = $(this).serialize();
-    recherche('f',params);
+    recherche('f','p=na');
   });//fin $.form_recherche
 
   //--------------FIN gestion du formulaire de recherche----------------------
 
   //-------------on prepare l'affichage de select pays et ville---------------
   //on commence par recuperer le pays selectionne
-  var pays_selected = $('#pays').find(':selected').val();
-  //on met dans "var ville" la ville selectionnee pour la reposter en cas de modif
-  var ville = '<?php echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
-  if (ville == '0'){//si 0 demander d'abord le choix d'un pays
-  $('#ville_select').html('<em><select class="form-control"><option value="na">Toutes</option></select></em>');
-}else if (pays_selected) {//sinon appeler la fonction d'affichage de villes
-showVilles();
-}
- recherche('f','p=na');//on lance une recherche telle quelle au rafrachissement
+  //   var pays_selected = $('#pays').find(':selected').val();
+  //   //on met dans "var ville" la ville selectionnee pour la reposter en cas de modif
+  // var ville = '<?php// echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
+  //   if (ville == '0'){
+  //   $('#ville_select').html('<em><select class="form-control"><option value="na">---</option></select></em>');
+  // }else if (pays_selected) {//sinon appeler la fonction d'affichage de villes
+  showVilles();
+  // }
+  recherche('f','p=na');//on lance une recherche telle quelle au rafrachissement
+
 });// Fin DR
 
-function recherche(a,p){
-  console.log('params ' + p);
+function populateTitre(){//post une recherche avec les parametres actuels et affiche les suggestions de titre
+  $.post('accueil.ajax.php?action=f' , 'p=na', function(valeurRetour){
+    if (valeurRetour.valide == 1){
+      var finale = formatListeTitre(valeurRetour.liste_annonces);
+      $('#titre_suggest').html(finale);
+    }
+  },'json');//fin $.post
+
+  // $('#suggest').on('click',function(event){
+  //   console.log('on est dedans');
+  //   // console.log($(this).html());
+  //
+  // });//fin suggest.on(click)
+  // $('#suggest').html('Hello world');
+}//fin populateTitre
+
+function recherche(a,p){//post en ajax avec a en get[action] et p en post puis affiche le resultat dans les annonces
   $.post('accueil.ajax.php?action='+a , p, function(valeurRetour){
-    var divDebut = '<div class="col-xs-10 col-xs-offset-1 text-center module_recherche">';
     if (valeurRetour.valide == 1){
       var finale = formatListeAnnnonces(valeurRetour.liste_annonces);
       $('#liste_annonces').html(finale);
     }
   },'json');//fin $.post
+}
+
+function formatListeTitre(liste){
+  var divDebut = '<div class="text-left module_recherche suggest">';
+  var finale = '';
+  if (Array.isArray(liste)){
+    for (var i = 0; i < liste.length; i++) {
+      finale += divDebut + '<a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">';
+      finale += liste[i].annonce.titre + '</a></div>';
+    }
+  }
+  return finale;
 }
 
 function formatListeAnnnonces(liste){
@@ -161,10 +252,23 @@ function formatListeAnnnonces(liste){
     finale += divDebut + '<em>Pas de resultat</em>' + '</div>';
   } else {
     for (var i = 0; i < liste.length; i++) {
-      finale += divDebut + liste[i].id_annonce + '<br>';
-      finale += liste[i].annonce.titre;
+      // console.table(liste);
+      finale += divDebut;
+      if (liste[i].annonce.photos.photo1)  finale += '<img src="' + liste[i].annonce.photos.photo1 + '" style="max-width: 20%; height: auto;"></img> ';
+      if (liste[i].annonce.photos.photo2)  finale += '<img src="' + liste[i].annonce.photos.photo2 + '" style="max-width: 20%; height: auto;"></img> ';
+      if (liste[i].annonce.photos.photo3)  finale += '<img src="' + liste[i].annonce.photos.photo3 + '" style="max-width: 20%; height: auto;"></img> ';
+      if (liste[i].annonce.photos.photo4)  finale += '<img src="' + liste[i].annonce.photos.photo4 + '" style="max-width: 20%; height: auto;"></img> ';
+      if (liste[i].annonce.photos.photo5)  finale += '<img src="' + liste[i].annonce.photos.photo5 + '" style="max-width: 20%; height: auto;"></img> ';
+
+      finale += '<br>' + liste[i].annonce.titre ;
+      finale += '<br><strong>'+ liste[i].annonce.prix +'</strong>';
+      finale += '<br>' + liste[i].annonce.description_courte;
+      finale += '<br>' + liste[i].annonce.ville + '  --  ' + liste[i].annonce.pays;
+      finale += '<br>' + liste[i].annonce.date_enregistrement;
+      finale += '<br><a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">Consulter l\'annonce</a>';
       finale += '</div>';
     }
+    // finale +=divDebut + '<?php// if(isset($_SESSION['recherche']['requete']))  echo $_SESSION['recherche']['requete']; ?>' + '</div>';
   }
   return finale;
 }

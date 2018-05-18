@@ -24,7 +24,7 @@ function getListCategoriesOption($selectedCategorie){//renvoie la liste des pays
 
 function getListPaysOption($selectedPays){//renvoie la liste des pays dans un <select><option>
   global $bdd;
-  $paysHTML = '<option value="na">Selectionnez un pays</option>';
+  $paysHTML = '<option value="na">---</option>';
   $req_pays = $bdd->query("SELECT * FROM pays");
   $pays = $req_pays->fetchAll(PDO::FETCH_OBJ);
   foreach ($pays as $value) {

@@ -9,14 +9,14 @@ function getAnnonce($idAnnonce){
 
   if (!empty($tab_annonce['photo_id'])){
     $req_photos = $bdd->query("SELECT photo1, photo2, photo3, photo4, photo5 FROM photo WHERE id_photo=".$tab_annonce['photo_id']);
-    if (!$req_photos){
+    if ($req_photos){
       $photos = $req_photos->fetch(PDO::FETCH_ASSOC);
       $tab_annonce['photos'] = $photos;
     } else {
-      $tab_annonce['photos'] = '';
+      $tab_annonce['photos'] = 'n/a';
     }
   } else {
-    $tab_annonce['photos'] = '';
+    $tab_annonce['photos'] = 'n/a';
   }
 
 
@@ -38,7 +38,7 @@ function getAnnonce($idAnnonce){
   $tab_annonce['ville'] = $nom_ville['nom_ville'];
 
   $req_commentaires = $bdd->query("SELECT * FROM commentaire WHERE annonce_id=".$tab_annonce['id_annonce']." ORDER BY date_enregistrement DESC");
-  if (!$req_commentaires){
+  if ($req_commentaires){
     $tab_annonce['commentaires'] = $req_commentaires->fetchAll(PDO::FETCH_ASSOC);
   } else {
     $tab_annonce['commentaires'] = '';
