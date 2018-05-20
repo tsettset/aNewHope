@@ -22,6 +22,26 @@ if (isset($_GET['action'])) {
     }
     break;
 
+    case 'add':
+    if( !isset($_POST['titre_add']) || empty($_POST['titre_add']) ) {
+      $tab_retour['valide']=0;
+      $tab_retour['err_message'] = 'Le titre ne peut pas etre vide';
+    }
+
+    if (strlen($_POST['titre_add']) > 255){
+      $tab_retour['valide']=0;
+      $tab_retour['err_message'] = 'Le titre est trop long';
+    }
+
+    if ($tab_retour['valide'] == 1){
+      if (!insertionCategorie($_POST)) {
+        $tab_retour['valide']=0;
+        $tab_retour['err_message'] = 'Ce titre de categorie existe deja !';
+      }
+    }
+
+    break;
+
     case 'modif' :
       if (isset($_POST['titre'])){
         if (!empty($_POST['titre'])){
@@ -57,6 +77,29 @@ if (isset($_GET['action'])) {
 
   }
 
+  function insertionCategorie($post){
+    global $bdd;
+
+    $req_check=$bdd->prepare("SELECT titre FROM categorie WHERE titre = :titre");
+    $req_check->bindValue(':titre', $post['titre_add']);
+    $req_check->execute();
+    if ($req_check->rowCount() > 0){
+      return false;
+    }
+
+    if (isset($post['motscles_add']) && !empty($post['motscles_add'])){
+        $queryString = "INSERT INTO categorie (titre, motscles) VALUES (:titre, :motscles);";
+    } else {
+      $queryString = "INSERT INTO categorie (titre) VALUES (:titre);";
+    }
+    $req_add = $bdd->prepare($queryString);
+    $req_add->bindValue(':titre', $post['titre_add']);
+
+    if (isset($post['motscles_add']) && !empty($post['motscles_add'])){
+      $req_add->bindValue(':motscles', $post['motscles_add']);
+    }
+    return ($req_add->execute());
+  }
 
   function getCategories(){
     global $bdd;

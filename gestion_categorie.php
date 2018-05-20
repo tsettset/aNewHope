@@ -11,6 +11,10 @@ if (!isset($_SESSION['categories']['orderBy'])){
   $_SESSION['categories']['orderBy'] = 'ASC';
 }
 // debug($_SESSION);
+
+global $bdd;
+
+
 ?>
 
 <div class="container">
@@ -19,7 +23,6 @@ if (!isset($_SESSION['categories']['orderBy'])){
       <h2>Gestion des categories</h2>
     </div>
   </div>
-  <div id="err_message"></div>
   <div class="row module_recherche">
     <div class="col-xs-2">
       <h3>Nom categorie</h3>
@@ -33,11 +36,26 @@ if (!isset($_SESSION['categories']['orderBy'])){
     </div>
     <div class="col-xs-8">
       <h3>Mots Cles</h3>
+
     </div>
     <div class="col-xs-2">
       <h3>Actions</h3>
     </div>
   </div>
+  <form id="form_add">
+    <div class="row module_recherche">
+      <div class="col-xs-2 module_recherche">
+        <input type="text" id="titre_add" name="titre_add" class="form-control" placeholder="Ajout de categorie">
+        <div id="err_message" style="color: red"></div>
+      </div>
+      <div class="col-xs-8 module_recherche">
+        <input type="text" id="motscles_add" name="motscles_add" class="form-control" placeholder="mots cles a associer">
+      </div>
+      <div class="col-xs-2 module_recherche">
+        <input type="submit" class="form-control glyphicon glyphicon-edit" value="save">
+      </div>
+    </div>
+  </form>
   <div id="liste_categorie">
   </div>
 
@@ -51,6 +69,26 @@ $(document).ready(function(){
 
   //-------------------AJOUT-------------------------------------------------------------
 
+  $('#form_add').on('submit', function(event){
+    //pour les events dynamiques (= events sur elements ajoutes dynamiquement dans la page)
+    //il faut attacher l'event par le parent, ainsi des la creation des elements ils auront deja
+    //l'event
+    event.preventDefault();
+    var param = $('#form_add').serialize();
+    $.post('gestion_categorie.ajax.php?action=add' , param, function(valeurRetour){
+      if (valeurRetour.valide==0){
+        if (valeurRetour.err_message){
+          $('#err_message').html(valeurRetour.err_message);
+        }
+      } else {
+        $('#titre_add').val('');
+        $('#motscles_add').val('');
+      }
+    },'json');//fin $.post
+
+
+    populateCategories(0);
+  });//fin #ajout on.submit
 
   //--------------Modification-----------------------------------------------------------
 
@@ -68,7 +106,6 @@ $(document).ready(function(){
     //l'event
     event.preventDefault();
     var param = $('#form_modif').serialize();
-    console.log(param);
     $.post('gestion_categorie.ajax.php?action=modif' , param, function(valeurRetour){
       if (valeurRetour.valide==0){
         if (valeurRetour.err_message){
@@ -93,7 +130,7 @@ $(document).ready(function(){
     $.post('gestion_categorie.ajax.php?action=suppression' , param, function(valeurRetour){
       populateCategories(0);
     }
-  ,'json');
+    ,'json');
   });//fin .suppression on.click
 
   //-----------------Ordre de tri sur le titre-------------------------------------------
@@ -133,13 +170,15 @@ function populateCategories(categorieAModif){
           finale += divDebut;
           finale += '<input type="text" name="titre" value="' + valeurRetour.categorie[i].titre + '" class="form-control">';
           finale += divDeux;
+          if (valeurRetour.categorie[i].motscles == 'null') valeurRetour.categorie[i].motscles = '';
           finale += '<input type="text" name="motscles" value="' + valeurRetour.categorie[i].motscles + '" class="form-control">';
           finale += divTrois;
           finale += '<input type="hidden" name="id_categorie" value="' + valeurRetour.categorie[i].id_categorie + '">';
-          finale += '<input type="submit" value="save">';
+          finale += '<input type="submit" class="form-control glyphicon glyphicon-edit" value="save">';
           finale += divFin;
           finale += '</form>';
         } else{
+          if (valeurRetour.categorie[i].motscles == null) valeurRetour.categorie[i].motscles = '';
           finale += divDebut + valeurRetour.categorie[i].titre + divDeux + valeurRetour.categorie[i].motscles + divTrois;
           finale += '<div class="row"><div class="col-xs-2 col-xs-offset-1">';
           finale += '<a href=""><span class="modif glyphicon glyphicon-edit" value="' + valeurRetour.categorie[i].id_categorie + '"></span></a>';
