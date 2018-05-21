@@ -21,10 +21,10 @@ require_once ('header.inc.php');
       <li><a href="accueil.php">Annonces</a></li>
 <?php if(internauteEstConnecteEtEstAdmin()){
   echo '<li><a href="gestion_membre.php">Gestion membres</a></li>';
-  // echo '<li><a href="gestion_commentaire.php">Gestion commentaire</a></li>';
-  echo '<li><a href="gestion_note.php">Gestion notes</a></li>';
   echo '<li><a href="gestion_categorie.php">Gestion catégories</a></li>';
-  echo '<li><a href="gestion_annonce.php">Gestion annonces</a></li>';
+  echo '<li><a href="gestion_commentaire.php">Gestion commentaires</a></li>';
+  echo '<li><a href="gestion_note.php">Gestion notes</a></li>';
+  // echo '<li><a href="gestion_annonce.php">Gestion annonces</a></li>';
   echo '<li><a href="statistique.php">Statistiques</a></li>';
 }  ?>
     </ul>

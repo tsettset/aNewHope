@@ -9,13 +9,14 @@ require_once('fannonce.fonctions.php');
 
 require_once('navbar.php');
 
-// debug (makeSearch());
+debug (makeSearch());
 $check = array();
 if (isset($_POST) && !empty($_POST)){
   // debug($_POST);
   $check = laveRecherchePost($_POST);
   // debug($check);
 }
+debug ($_SESSION);
 ?>
 <div class="container">
   <div class="row">
@@ -57,8 +58,16 @@ if (isset($_POST) && !empty($_POST)){
           </div>
           <div class="col-xs-10 col-xs-offset-1">
             <div class="form-group">
+              <label for="pseudo">Pseudo de l'auteur</label>
+              <input type="text" name="pseudo" id="pseudo" class="form-control" placeholder="Rechercher par pseudo de l'auteur" />
+            </div>
+            <div id="auteur_suggest">
+            </div>
+          </div>
+          <div class="col-xs-10 col-xs-offset-1">
+            <div class="form-group">
               <label for="titre">Titre de l'annonce contient</label>
-              <input type="text" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" />
+              <input type="text" title="entrez au moins 3 caracteres" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" />
             </div>
             <div id="titre_suggest">
             </div>
@@ -73,11 +82,11 @@ if (isset($_POST) && !empty($_POST)){
               <input type="number" name="prix_max" id="prix_max" title="inferieur a 999999">
             </div>
           </div>
-          <div class="col-xs-10 col-xs-offset-1" >
+          <!-- <div class="col-xs-10 col-xs-offset-1" >
             <div class="form-group">
               <button type="submit" class="btn btn-primary">appliquer ces criteres</button>
             </div>
-          </div>
+          </div> -->
         </div>
       </form>
     </div><!--fin module_recherche-->
@@ -170,9 +179,23 @@ $(document).ready(function(){
       populateTitre();
     } else {
       $('#titre_suggest').html('');
+      recherche('reset','p=titre');
     }
 
   });//fin titre.on('input')
+
+  //--------------Recherche Pseudo Auteur-------------------------------------------------
+  $('#pseudo').on('input',function(){
+    var params = 'pseudo=' + $(this).val();
+    if (params.length - 6 > 2){
+      recherche('pseudo', params);
+      populateTitre();
+    } else {
+      $('#pseudo_suggest').html('');
+
+    }
+
+  });//fin pseudo.on('input')
 
   //--------------Prix Mini--------------------------------------------------
   $('#prix_min').on('input',function(){
@@ -187,10 +210,10 @@ $(document).ready(function(){
   });//fin prix_min.on('change')
 
   //--------------formulaire de recherche complet--------------------------
-  $('#form_recherche').on('submit',function(event){
-    event.preventDefault();
-    recherche('f','p=na');
-  });//fin $.form_recherche
+  // // $('#form_recherche').on('submit',function(event){
+  // //   event.preventDefault();
+  // //   recherche('f','p=na');
+  // });//fin $.form_recherche
 
   //--------------FIN gestion du formulaire de recherche----------------------
 
@@ -216,12 +239,6 @@ function populateTitre(){//post une recherche avec les parametres actuels et aff
     }
   },'json');//fin $.post
 
-  // $('#suggest').on('click',function(event){
-  //   console.log('on est dedans');
-  //   // console.log($(this).html());
-  //
-  // });//fin suggest.on(click)
-  // $('#suggest').html('Hello world');
 }//fin populateTitre
 
 function recherche(a,p){//post en ajax avec a en get[action] et p en post puis affiche le resultat dans les annonces
@@ -251,7 +268,7 @@ function formatListeAnnnonces(liste){
   if (liste == 0){
     finale += divDebut + '<em>Pas de resultat</em>' + '</div>';
   } else {
-    for (var i = 0; i < liste.length; i++) {
+    for (var i = 0; i < liste.length-1; i++) {
       // console.table(liste);
       finale += divDebut;
       if (liste[i].annonce.photos.photo1)  finale += '<img src="' + liste[i].annonce.photos.photo1 + '" style="max-width: 20%; height: auto;"></img> ';
@@ -268,7 +285,7 @@ function formatListeAnnnonces(liste){
       finale += '<br><a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">Consulter l\'annonce</a>';
       finale += '</div>';
     }
-    // finale +=divDebut + '<?php// if(isset($_SESSION['recherche']['requete']))  echo $_SESSION['recherche']['requete']; ?>' + '</div>';
+    finale += divDebut + liste[liste.length-1].requete + '</div>';
   }
   return finale;
 }

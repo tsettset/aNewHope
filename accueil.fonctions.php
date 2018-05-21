@@ -10,6 +10,7 @@ function initRecherche(){
   $_SESSION['recherche']['titre'] = '';
   $_SESSION['recherche']['prixMini'] = 0;
   $_SESSION['recherche']['prixMax'] = 999999;
+  $_SESSION['recherche']['membre_id'] = '';
 }
 
 function makeSearch(){
@@ -54,7 +55,8 @@ function makeSearch(){
   $req_annonces = $bdd->query($requete);
   $annonces = $req_annonces->fetchAll(PDO::FETCH_ASSOC);
 
-  $_SESSION['recherche']['requete'] = $requete;
+  $_SESSION['recherche']['requete'] = htmlspecialchars($requete);
+  $annonces[]['requete']=$requete;
 
   if ($annonces && !empty($annonces)){
     return $annonces;
