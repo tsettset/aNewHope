@@ -21,7 +21,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])){
     degage();
   }
   $annonce['comm_msg'] = $comm_msg;
-}else degage();
+}else{ degage();}
 
 showForm($annonce);
 

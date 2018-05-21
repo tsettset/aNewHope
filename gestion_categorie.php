@@ -168,7 +168,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){ ?>
         <?php 
 
     for ($i=0; $i<$req->rowCount(); $i++){
-
+        debug($donnees[$i]);
         echo '</tr>';
         echo'<td>'.$donnees[$i]['titre'].'</td>';
         echo'<td>'.$donnees[$i]['motscles'].'</td>';
