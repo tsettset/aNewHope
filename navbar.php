@@ -50,7 +50,5 @@ require_once ('header.inc.php');
     </ul>
   </div>
 </nav>
-<div class="container mon-conteneur">
-  <br>
-  <br>
-
+<br>
+<br>

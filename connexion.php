@@ -8,6 +8,7 @@ if(isset($_GET['action']) && $_GET['action']=="deconnexion"){
 
    session_destroy();
    header('Location: accueil.php');
+  
 }
 
 
@@ -70,3 +71,6 @@ if($_POST){
       </form>
    </div>
 </div>
+<?php
+require_once ('footer.php');
+?>

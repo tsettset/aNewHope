@@ -1,10 +1,10 @@
 <?php
-require_once ('init.inc.php');
-require_once ('fonctions.inc.php');
-require_once ('navbar.php');
+require_once('init.inc.php');
+require_once('fonctions.inc.php');
+require_once('navbar.php');
+?>
 
-
-$req=$bdd->query('select * from membre');
+<?php $req=$bdd->query('select * from membre');
 
 $donnees=$req->fetchAll(PDO::FETCH_ASSOC);
 
@@ -18,7 +18,7 @@ if(isset($_GET['action'])&& $_GET['action']=="suppression"){
     $del->execute();
 
 
-    $content .='<div class="alert alert-success col-md-8 col-md-offset-2 text-center">Le membre '.$_GET['id'].'a bien été supprimé ! </div>';
+    $content .='<div class="alert alert-success col-md-8 col-md-offset-2 text-center">Le membre '.$_GET['id'].' a bien été supprimé ! </div>';
 
 
     $req=$bdd->query('select * from membre');
@@ -31,18 +31,147 @@ if(isset($_GET['action'])&& $_GET['action']=="suppression"){
 echo $content;
 
 
-if(isset($_GET['action']) && $_GET['action']=="modification")
+if(isset($_GET['action']) && $_GET['action']=="modification"){
 
+    $req=$bdd->prepare("select * from membre where id_membre=:id");
+    $req->bindValue('id', $_GET['id'], PDO::PARAM_INT);
+    $req->execute();
+
+    $donnees=$req->fetchAll(PDO::FETCH_ASSOC);
+    //debug($donnees);
+
+    foreach($donnees as $value){
+
+        //debug($value);
+    }
+
+    if(isset($_POST['inscriSubmit'])){
+
+        $maj=$bdd->prepare("update membre set pseudo=:pseudo, nom=:nom, prenom=:prenom, telephone=:telephone, email=:email, civilite=:civilite, statut=:statut where id_membre=:id");
+        $maj->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+        $maj->bindValue(':pseudo', $_POST['pseudo'], PDO::PARAM_STR);
+        $maj->bindValue(':nom', $_POST['nom'], PDO::PARAM_STR);
+        $maj->bindValue(':prenom', $_POST['prenom'], PDO::PARAM_STR);
+        $maj->bindValue(':telephone', $_POST['telephone'], PDO::PARAM_INT);
+        $maj->bindValue(':email', $_POST['email'], PDO::PARAM_STR);
+        $maj->bindValue(':civilite', $_POST['civilite'], PDO::PARAM_STR);
+        $maj->bindValue(':statut', $_POST['statut'], PDO::PARAM_STR);
+        $maj->execute();
+
+
+
+
+
+        $content .='<div class="alert alert-success col-md-8 col-md-offset-2 text-center">Le membre '.$_GET['id'].' a bien été modfié ! </div>';
+    }
+
+
+    $_GET['action']=="affichage";
+    $req=$bdd->query('select * from membre');
+
+    $donnees=$req->fetchAll(PDO::FETCH_ASSOC);
+//debug($donnees, 2);
+?>
+
+   
+<div class="container">
+    <div class="jumbotron">
+        <form id="form" method="post" action="#">
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="pseudo">Pseudo : </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div><input class="form-control" type="text" name="pseudo" placeholder="Votre pseudo" id="pseudo" value="<?= $value['pseudo'];?>">
+                    </div>
+                </div>
+                <!--<div class="col-md-6">
+                    <label for="mdp">Mot de passe : </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></div><input class="form-control" type="password" name="mdp" id="mdp" placeholder="Votre mot de passe" >
+                    </div>
+                </div>-->
+            </div><br>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="nom">Nom: </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div><input class="form-control" type="text" name="nom" id="nom" placeholder="Votre nom" value="<?= $value['nom'];?>" >
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="prenom">Prénom: </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div><input class="form-control" type="text" name="prenom" id="prenom" placeholder="Votre prenom" value="<?=$value['prenom'];?>"  >
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="telephone">Téléphone : </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-phone-alt"></span></div><input class="form-control" type="tel"  name="telephone" id="telephone" placeholder="Votre téléphone" value="<?= $value['telephone'];?>"  >
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="mdp">Email: </label>
+                    <div class="input-group">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div><input class="form-control" type="email" name="email" id="email" placeholder="Votre email" value="<?= $value['email'];?>" >
+                    </div>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="civilite">Civilite :</label>
+                    <select name="civilite" class="form-control">
+                        <option value="monsieur"<?php if($value['civilite']=="monsieur"){ echo 'selected="selected"';}?>>Monsieur</option>
+                        <option value="madame"<?php if($value['civilite']=="madame"){ echo 'selected="selected"';}?>>Madame</option>
+                        <option value="mademoiselle"<?php if($value['civilite']=="mademoiselle"){ echo 'selected="selected"';}?>>Mademoiselle</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-md-offset-8">
+                    <label for="statut">Statut :</label>
+                    <select name="statut" class="form-control">
+                        <option value="admin" <?php if($value['statut']=="admin"){ echo 'selected="selected"';}?>>Admin</option>
+                        <option value="membre" <?php if($value['statut']=="membre"){ echo 'selected="selected"';}?>>Membre</option>   
+                    </select>
+                </div>
+            </div><br>
+
+            <input type="submit" name="inscriSubmit" id="inscriSubmit" class="btn btn-info center-block" value="Modifier">
+            
+        </form>
+    </div>
+</div>
+<script>
+/*document.getElementById('inscriSubmit').addEventListener('click',function(){
+       var test= document.getElementById('form').style.display="none";
+    console.log(test);
+ 
+});*/
+    
+</script>
+<?php 
+    
+    //header('Location:gestion_membre');
+} 
 
 
 
 ?>
 
-<h1 style="color : darkblue; font-weight : bold; text-align :center; text-decoration: underline">GESTION DES MEMBRES</h1>
+
+
+
+
+
+
 
 <div class="container">
 
-    <table class="table table-striped" style="border: 1px solid darkblue; height:350px; width:100%">
+    <table class="table table-striped" style="border: 1px solid darkblue; width:100%">
         <tr class="info">
             <th>Pseudo</th>
             <th>Civilité</th>
@@ -80,76 +209,9 @@ if(isset($_GET['action']) && $_GET['action']=="modification")
 
     </table>
 
-
-
-
-    <div class="jumbotron">
-        <form method="post" action="">
-
-
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="pseudo">Pseudo : </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div><input class="form-control" type="text" name="pseudo" placeholder="Votre pseudo" id="pseudo">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="mdp">Mot de passe : </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></div><input class="form-control" type="password" name="mdp" id="mdp" placeholder="Votre mot de passe">
-                    </div>
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="nom">Nom: </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div><input class="form-control" type="text" name="nom" id="nom" placeholder="Votre nom">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="prenom">Prénom: </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div><input class="form-control" type="text" name="prenom" id="prenom" placeholder="Votre prenom">
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="telephone">Téléphone : </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-phone-alt"></span></div><input class="form-control" type="tel" name="telephone" id="telephone" placeholder="Votre téléphone">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="mdp">Email: </label>
-                    <div class="input-group">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div><input class="form-control" type="email" name="email" id="email" placeholder="Votre email">
-                    </div>
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-md-2">
-                    <label for="civilite">Civilite :</label>
-                    <select class="form-control">
-                        <option value="monsieur">Monsieur</option>
-                        <option value="Madame">Madame</option>
-                        <option value="Mademoiselle">Mademoiselle</option>
-                    </select>
-                </div>
-                <div class="col-md-2 col-md-offset-8">
-                    <label for="statut">Statut :</label>
-                    <select class="form-control">
-                        <option value="admin">Admin</option>
-                        <option value="membre">Membre</option>   
-                    </select>
-                </div>
-            </div><br>
-
-            <input type="submit" name="inscriSubmit" id="inscriSubmit" class="btn btn-info" value="S'inscrire">
-
-        </form>
-    </div>
 </div>
+<br><br><br><br>
+<?php
+require_once('footer.php');
+?>
+

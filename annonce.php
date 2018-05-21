@@ -3,6 +3,8 @@ require_once('init.inc.php');
 require_once('fonctions.inc.php');
 require_once('header.inc.php');
 require_once('annonce.fonctions.php');
+require_once('navbar.php');
+require_once('footer.php');
 
 if(isset($_GET['id']) && !empty($_GET['id'])){
   $annonce = getAnnonce(intval($_GET['id']));
