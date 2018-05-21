@@ -1,20 +1,19 @@
 <?php
-<<<<<<< HEAD
 require_once ('init.inc.php');
 require_once ('fonctions.inc.php');
 require_once ('navbar.php');
 require_once ('footer.php');
-?>
-=======
-require_once('init.inc.php');
+
+
+//require_once('init.inc.php');
 require_once('accueil.fonctions.php');
 initRecherche();
-require_once('fonctions.inc.php');
-require_once('header.inc.php');
+//require_once('fonctions.inc.php');
+//require_once('header.inc.php');
 require_once('annonce.fonctions.php');
 require_once('fannonce.fonctions.php');
 
-require_once('navbar.php');
+//require_once('navbar.php');
 
 // debug (makeSearch());
 $check = array();

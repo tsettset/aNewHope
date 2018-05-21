@@ -2,7 +2,7 @@
 
 require_once('header.inc.php');
 require_once('navbar.php');
-require_once('footer.php');
+
 
 ?>
 <div class="container">

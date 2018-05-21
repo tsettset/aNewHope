@@ -12,7 +12,7 @@ require_once ('header.inc.php');
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#" >TROC</a>
+    <a class="navbar-brand" href="accueil.php">TROC</a>
   </div>
   <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
@@ -40,6 +40,7 @@ require_once ('header.inc.php');
 <?php if(!internauteEstConnecte()){
   echo '<li style="font-size: 20px;"><a href="inscription.php">Inscription</a></li>';
   echo '<li style="font-size: 20px;"><a href="connexion.php">Connexion</a></li>';
+  //header('Location: accueil.php');
 }else{
           
           echo'<li style="font-size: 20px;"><a href="profil.php">Profil</a></li>';
