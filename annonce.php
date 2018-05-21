@@ -6,14 +6,26 @@ require_once('annonce.fonctions.php');
 require_once('navbar.php');
 require_once('footer.php');
 
+$annonce = array ();
+$comm_msg = '';
+
+
 if(isset($_GET['id']) && !empty($_GET['id'])){
+
+  if(isset($_POST['post_comment']) && !empty($_POST['post_comment'])){
+    $comm_msg = insertCommentaire($_POST['post_comment'], intval($_GET['id']), $_SESSION['id_membre']);
+  }
+
   $annonce = getAnnonce(intval($_GET['id']));
-  debug($annonce);
-}else echo 'nope';
+  if ($annonce == 0){
+    degage();
+  }
+  $annonce['comm_msg'] = $comm_msg;
+}else degage();
+
 showForm($annonce);
 
 require_once('footer.php');
-
 
 function showForm($annonce){
   ?>
@@ -23,15 +35,15 @@ function showForm($annonce){
         <h1><?= $annonce['titre']; ?></h1>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xs-8 col-xs-offset-2 text-center">
-        <?php
-        // if (!empty($_SESSION['id_membre'])){ -- TAG ----- A MODIF APRES INTEGRAGTION ---- TAG ----?>
-        <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modif cette annonce</a>
-        <?php// }
-        ?>
+    <?php
+    if (!empty($_SESSION['id_membre']) && $_SESSION['id_membre'] == $annonce['membre_id']){ ?>
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2 text-center">
+          <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modifier cette annonce</a>
+        </div>
       </div>
-    </div>
+    <?php }
+    ?>
     <div class="row">
       <div class="col-xs-4 text-right">
         Date de derniere mise a jour :
@@ -202,24 +214,7 @@ function showForm($annonce){
         ?>
       </div>
     </div>
-    <?php if (!empty($annonce['commentaires'])){
-      foreach ($annonce['commentaires'] as $value) {?>
-        <div class="row">
-          <div class="col-xs-2 col-xs-offset-4 text-center">
-            <?php echo getPseudoMembre($value['membre_id']);?>
-          </div>
-          <div class="col-xs-2 text-center">
-            <?php echo $value['date_enregistrement'].'<br>';?>
-          </div>
-
-          <div class="col-xs-8 col-xs-offset-2 text-center">
-            <?php echo $value['commentaire'].'<br>';?>
-          </div>
-        </div>
-        <?php
-      }
-    }?>
-
+    <?php include ('commpi.php'); ?>
   </div>
   <?php
 }

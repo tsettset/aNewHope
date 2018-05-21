@@ -10,3 +10,11 @@
   border-color: lightgrey;
   border-width: thin;
 }
+.module_recherche{
+  border-style: solid;
+  border-color: lightgrey;
+  border-width: thin;
+}
+.suggest{
+  background-color: darkgrey;
+}

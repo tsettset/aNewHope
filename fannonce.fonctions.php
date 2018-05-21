@@ -1,17 +1,21 @@
-<?php
+ <?php
 function degage(){
   header("Location: katsanscat.php");
 }
 
 function getListCategoriesOption($selectedCategorie){//renvoie la liste des pays dans un <select><option>
   global $bdd;
-  $categoriesHTML = '<option value="na">Selectionnez une categorie</option>';
-  $req_categories = $bdd->query("SELECT id_categorie,titre FROM categorie");
+  $categoriesHTML = '<option value="na"';
+  if ($selectedCategorie == 0){
+    $categoriesHTML .= ' selected';
+  }
+  $categoriesHTML .= '>Selectionnez une categorie</option>';
+  $req_categories = $bdd->query("SELECT id_categorie,titre FROM categorie ORDER BY titre ASC");
   $categories = $req_categories->fetchAll(PDO::FETCH_OBJ);
   foreach ($categories as $value) {
     $categoriesHTML .= '<option value="'.$value->id_categorie.'"';
     if ($selectedCategorie == $value->id_categorie){
-      $categoriesHTML .= 'selected';
+      $categoriesHTML .= ' selected';
     }
     $categoriesHTML .= '>'.$value->titre.'</option>';
   }
@@ -20,7 +24,7 @@ function getListCategoriesOption($selectedCategorie){//renvoie la liste des pays
 
 function getListPaysOption($selectedPays){//renvoie la liste des pays dans un <select><option>
   global $bdd;
-  $paysHTML = '<option value="na">Selectionnez un pays</option>';
+  $paysHTML = '<option value="na">---</option>';
   $req_pays = $bdd->query("SELECT * FROM pays");
   $pays = $req_pays->fetchAll(PDO::FETCH_OBJ);
   foreach ($pays as $value) {
@@ -62,7 +66,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
     }
     $req_insert = $bdd->prepare(
       "INSERT INTO annonce (titre, description_courte, description_longue, prix, pays, ville, adresse, cp, date_enregistrement, membre_id, categorie_id)
-      VALUES (:titre, :description_courte, :description_longue, :prix, :pays, :ville, :adresse, :cp, NOW(), 1, :categorie_id);");
+      VALUES (:titre, :description_courte, :description_longue, :prix, :pays, :ville, :adresse, :cp, NOW(), :membre_id, :categorie_id);");
 
       $req_insert->bindValue(':titre', $check['titre'], PDO::PARAM_STR);
       $req_insert->bindValue(':description_courte', $check['description_courte'], PDO::PARAM_STR);
@@ -73,7 +77,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
       $req_insert->bindValue(':ville', $check['ville'], PDO::PARAM_STR);
       $req_insert->bindValue(':adresse', $check['adresse'], PDO::PARAM_STR);
       $req_insert->bindValue(':cp', $check['code_postal'], PDO::PARAM_INT);
-      //$req_insert->bindValue(':membre_id', '1');/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
+      $req_insert->bindValue(':membre_id', $check['id_membre']);
       $req_insert->bindValue(':categorie_id', $check['categorie_id'], PDO::PARAM_INT);
       $req_insert->execute();
       if (isset($id_photos)){
@@ -102,7 +106,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         adresse = :adresse,
         cp = :cp,
         date_enregistrement = NOW(),
-        membre_id = 1,
+        membre_id = :membre_id,
         categorie_id = :categorie_id
         WHERE id_annonce = :id_annonce ;");
         $req_insert->bindValue(':titre', $check['titre'], PDO::PARAM_STR);
@@ -114,7 +118,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         $req_insert->bindValue(':ville', $check['ville'], PDO::PARAM_STR);
         $req_insert->bindValue(':adresse', $check['adresse'], PDO::PARAM_STR);
         $req_insert->bindValue(':cp', $check['code_postal'], PDO::PARAM_INT);
-        //$req_insert->bindValue(':membre_id', '1');/* TAG -- A MODIF APRES INTEGRATION DE LA SESSION-- TAG */
+        $req_insert->bindValue(':membre_id', $check['id_membre'], PDO::PARAM_INT);
         $req_insert->bindValue(':categorie_id', $check['categorie_id'], PDO::PARAM_INT);
         $req_insert->bindValue(':id_annonce', $check['id_annonce'], PDO::PARAM_STR);
         $req_insert->execute();
@@ -131,7 +135,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
             $i++;
           }while(!empty($photosList['photo'.$i]));
 
-          $req_photos_str = 'UPDATE photo SET photo'.$i.' = \''.$value.'\' WHERE id_photo = :id';          
+          $req_photos_str = 'UPDATE photo SET photo'.$i.' = \''.$value.'\' WHERE id_photo = :id';
           $req_update_photo = $bdd->prepare($req_photos_str);
           $req_update_photo->bindValue(':id', $id_photos, PDO::PARAM_STR);
           $req_update_photo->execute();
@@ -152,7 +156,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
       return ($annonce['id_annonce']);
     }
 
-    function getAnnonce($id_annonce, $tab){
+    function getAnnonceModif($id_annonce, $tab){
       global $bdd;
       $req_annonce = $bdd->prepare("SELECT * FROM annonce WHERE id_annonce = :id");
       $req_annonce->bindValue(':id', $id_annonce, PDO::PARAM_INT);
@@ -223,6 +227,11 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         if (!is_numeric($prix)){
           $tab['valide'] = 0;
           $tab['message'] .= 'Le prix entre n\'est pas un chiffre.<br>';
+        } else {
+          if ( $prix > 99999){
+            $tab['valide'] = 0;
+            $tab['message'] .= 'Nous n\'autorisons pas des annonces au prix superieur a 99999.<br>';
+          }
         }
       }else {
         $tab['message'] .= '';
@@ -264,7 +273,7 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
         $adresse = htmlspecialchars($adresse, ENT_QUOTES);
         $tab['adresse'] = $adresse;
         if (strlen($adresse) > 50){
-          $tab['message'] .= 'Adresse l\'annonce trop longue <br>';
+          $tab['message'] .= 'L\'Adresse de l\'annonce est trop longue -- (limite a 50 caracteres) <br>';
           $tab['valide'] = 0;
         }
       }

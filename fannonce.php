@@ -5,12 +5,17 @@ require_once('header.inc.php');
 require_once('fannonce.fonctions.php');
 require_once('navbar.php');
 require_once('footer.php');
-$check = array();
+
 $annonceAModif = array();
 $check['valide'] = -1;//on init a -1 pour le premier passage afin de ne pas trigger les messages d'erreur
 $check['message'] = '';//on init a vide pour ne pas trigger les messages
 $check['status'] = '';//pour savoir l'etat de la page c = creation, m = modification, r = enregistrement effectue -> redirection proposee
 $check['titreDePage'] = 'Deposer une annonce';
+// debug ($_SESSION);
+
+if (isset($_SESSION['id_membre'])){
+  $check['id_membre'] = $_SESSION['id_membre'];
+} else degage();
 
 if (isset($_GET['action']) && !empty($_GET['action'])){
   switch ($_GET['action']) {
@@ -27,7 +32,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])){
       if (empty($annonceAModif)){
         $check['valide'] = 0;
       } else {
-        $check = getAnnonce($annonceAModif, $check);
+        $check = getAnnonceModif($annonceAModif, $check);
+        if ($check['id_membre'] !== $check['membre_id']) {
+          degage();
+        }
       }
     }else{
       degage();
@@ -67,6 +75,13 @@ if ($check['valide'] == 1){//si on est valide on procede a l'upload des photos e
   }
   if ($_GET['action'] == 'm'){
     $check['id_annonce'] = modifAnnonce($check, $photos_bdd);//Envoi vers la bdd
+    if ($check['id_annonce'] == 0){
+      $check['valide'] = 0;
+      $check['message'] .= 'Une erreur s\'est produite.<br>';
+      $check['message'] .= '<a href="javascript:history.back(-1);">Retour</a><br>';
+      $check['message'] .= '<a href="fannonce.php?action=c">Deposer une annonce</a><br>';
+    }
+
   }
   $check['status'] = 'r';//affiche le menu de redirection
 
@@ -85,19 +100,39 @@ ShowForm($check);//affiche la page
 <script>
 $(document).ready(function(){
 
+  _prefix_img = 'img_';//globale, sera utilisee pour retrouver les id des images
+  _prefix_file = 'file_';//globale, sera utilisee pour retrouver les id de l'interface d'upload de fichier
+  _prefix_suppr = 'suppr_';//globale, sera utilisee pour retrouver les id des liens de suppression
+
+  <?php  for ($i=1; $i < 6 ; $i++) {
+    $indice_photo = 'photo'.$i;
+    echo "var imgId = _prefix_img + `photo` + $i;";
+    echo "var fileUploadId = _prefix_file + 'photo' + $i;";
+    echo "var suppLinkId = _prefix_suppr + 'photo' + $i;";
+
+    if (isset($check[$indice_photo]) && !empty($check[$indice_photo])){
+      echo "$('#'+imgId).show();";
+      echo "$('#'+imgId).attr('src', '".$check[$indice_photo]."');";
+      echo "$('#'+suppLinkId).show();";
+      echo "$('#'+fileUploadId).hide();";
+    } else {
+      echo "$('#'+imgId).hide();";
+      echo "$('#'+suppLinkId).hide();";
+      echo "$('#'+fileUploadId).show();";
+    }
+  }?>
   $('.subphoto').on('click',function(event){//supprime une photo et reload la page
-    console.log('submitted : ' + this.name);
+    console.log(this.id);
     event.preventDefault();
     var id = '<?= isset($check['photo_id']) ? $check['photo_id'] : ''; ?>';
     var params = 'photo=' + this.name + '&photo_id=' + id;
-    console.log('params : '+params);
-    $.post('fannonce.ajax.php?action=photosupp', params, function(valeurRetour){
-      console.log('Supp BDD : ' + valeurRetour.suppBdd);
-      console.table('Supp Fichier : ' + valeurRetour.suppFichier);
-      var id_annonce = '<?= isset($check['id_annonce']) ? $check['id_annonce'] : ''; ?>';
-      window.location.replace('fannonce.php?action=m&annonce=' + id_annonce);
-    }
-    ,'json');
+    var imgId = '#' + _prefix_img + this.name;
+    var fileUploadId = '#' + _prefix_file + this.name;
+    var suppLinkId = '#' + _prefix_suppr + this.name;
+    $(imgId).hide();
+    $(suppLinkId).hide();
+    $(fileUploadId).show();
+    $.post('fannonce.ajax.php?action=photosupp', params, function(valeurRetour){},'json');
   });//fin subphoto
 
   var pays_selected = $('#pays').find(':selected').val();
@@ -109,7 +144,6 @@ $(document).ready(function(){
   }
   //on attache un event sur le <select pays> : charger la liste des villes quand on change de pays
   $('#pays').on('change',function(event){
-    console.log('bluebabba');
     showVilles();
   });
 
@@ -124,9 +158,11 @@ function showVilles(){
     params += pays_selected;
   }
   params += '&ville='+ville;
-  console.log(params);
   $.post('fannonce.ajax.php?action=getvilles', params, function(valeurRetour){
+<<<<<<< HEAD
     console.log(valeurRetour.arg1);
+=======
+>>>>>>> 4e8a18de51e455f974f334a88edfe71273ccb0fc
     if (valeurRetour.valide == 1){
       $('#ville_select').html(valeurRetour.optionList);
     }
@@ -175,7 +211,7 @@ function ShowForm($check){?>
       ?>
       <form method="post" action="" enctype="multipart/form-data" name="new_annonce" id="new_annonce">
         <div class="form-group text-center ">
-          <label for="titre">Titre</label>
+          <label for="titre">Titre - derniere mise a jour : <?= isset($check['date_enregistrement']) ? $check['date_enregistrement'] : '--:--:--'; ?></label>
           <input type="text" name="titre" id="titre" class="form-control" placeholder="Titre de l'annonce"
           <?php
           if ( (isset($check['titre'])) && ($check['titre'] !== '') ){
@@ -186,74 +222,43 @@ function ShowForm($check){?>
         <div class="row">
           <div class="form-group col-xs-2 col-xs-offset-1">
             <label for="photo1">Photo 1</label>
-            <?php
-            if (isset($check['photo1']) && !empty($check['photo1'])){?>
-              <img src="<?=$check['photo1']?>" alt="photo de l'annonce" class="img-responsive">              
-              <br>
-              <input type="submit" class="subphoto" name="photo1" value="Supprimer cette photo">
-              <?php
-            }else{?>
-              <input type="file" id="photo1" name="photo1" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo1">
+            <br>
+            <a href="" class="subphoto" name="photo1" id="suppr_photo1" >Supprimer cette photo</a>
+            <input type="file" name="photo1" id="file_photo1">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo2">Photo 2</label>
-            <?php
-            if (isset($check['photo2']) && !empty($check['photo2'])) {?>
-              <img src="<?=$check['photo2']?>" alt="photo de l'annonce" class="img-responsive">
-
-              <br>
-              <input type="submit" class="subphoto" name="photo2" value="Supprimer cette photo">
-              <?php
-            }else {?>
-              <input type="file" id="photo2" name="photo2" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo2">
+            <br>
+            <a href="" class="subphoto" name="photo2" id="suppr_photo2" >Supprimer cette photo</a>
+            <input type="file" name="photo2" id="file_photo2">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo3">Photo 3</label>
-            <?php
-            if (isset($check['photo3']) && !empty($check['photo3'])){?>
-              <img src="<?=$check['photo3']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <input type="submit" class="subphoto" name="photo3" value="Supprimer cette photo">
-              <?php
-            }else {?>
-              <input type="file" id="photo3" name="photo3" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo3">
+            <br>
+            <a href="" class="subphoto" name="photo3" id="suppr_photo3" >Supprimer cette photo</a>
+            <input type="file" name="photo3" id="file_photo3">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo4">Photo 4</label>
-            <?php
-            if (isset($check['photo4']) && !empty($check['photo4'])){?>
-              <img src="<?=$check['photo4']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <input type="submit" class="subphoto" name="photo4" value="Supprimer cette photo">
-              <?php
-            } else {?>
-              <input type="file" id="photo4" name="photo4" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo4">
+            <br>
+            <a href="" class="subphoto" name="photo4" id="suppr_photo4" >Supprimer cette photo</a>
+            <input type="file" name="photo4" id="file_photo4">
+            <br>
           </div>
           <div class="form-group col-xs-2">
             <label for="photo5">Photo 5</label>
-            <?php
-            if (isset($check['photo5']) && !empty($check['photo5'])){?>
-              <img src="<?=$check['photo5']?>" alt="photo de l'annonce" class="img-responsive">
-              <br>
-              <input type="submit" class="subphoto" name="photo5" value="Supprimer cette photo">
-              <?php
-            }else{?>
-              <input type="file" id="photo5" name="photo5" ><br>
-              <?php
-            }
-            ?>
+            <img src="" alt="photo de l'annonce" class="img-responsive" id="img_photo5">
+            <br>
+            <a href="" class="subphoto" name="photo5" id="suppr_photo5" >Supprimer cette photo</a>
+            <input type="file" name="photo5" id="file_photo5">
+            <br>
           </div>
         </div><!-- row -->
         <div class="form-group">
