@@ -112,7 +112,10 @@ if (isset($_GET['action'])){
     case 'reset':
     if (isset($_POST['p']) && $_POST['p'] == 'titre'){
       $_SESSION['recherche']['titre'] = '';
+    } else if (isset($_POST['p']) && $_POST['p'] == 'pseudo'){
+      $_SESSION['recherche']['pseudo'] = '';
     }
+
     $array_retour['liste_annonces'] = makeSearch();
     break;
 

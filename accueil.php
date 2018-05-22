@@ -61,7 +61,7 @@ debug ($_SESSION);
               <label for="pseudo">Pseudo de l'auteur</label>
               <input type="text" name="pseudo" id="pseudo" class="form-control" placeholder="Rechercher par pseudo de l'auteur" />
             </div>
-            <div id="auteur_suggest">
+            <div id="pseudo_suggest">
             </div>
           </div>
           <div class="col-xs-10 col-xs-offset-1">
@@ -187,12 +187,12 @@ $(document).ready(function(){
   //--------------Recherche Pseudo Auteur-------------------------------------------------
   $('#pseudo').on('input',function(){
     var params = 'pseudo=' + $(this).val();
-    if (params.length - 6 > 2){
+    if (params.length - 7 > 2){
       recherche('pseudo', params);
-      populateTitre();
+      populatePseudo();
     } else {
       $('#pseudo_suggest').html('');
-
+      recherche('reset','p=pseudo');
     }
 
   });//fin pseudo.on('input')
@@ -238,8 +238,17 @@ function populateTitre(){//post une recherche avec les parametres actuels et aff
       $('#titre_suggest').html(finale);
     }
   },'json');//fin $.post
-
 }//fin populateTitre
+
+function populatePseudo(){//post une recherche avec les parametres actuels et affiche les suggestions de titre
+  $.post('accueil.ajax.php?action=f' , 'p=na', function(valeurRetour){
+    if (valeurRetour.valide == 1){
+      var finale = formatListePseudo(valeurRetour.liste_annonces);
+      $('#pseudo_suggest').html(finale);
+    }
+  },'json');//fin $.post
+}//fin populatePseudo
+
 
 function recherche(a,p){//post en ajax avec a en get[action] et p en post puis affiche le resultat dans les annonces
   $.post('accueil.ajax.php?action='+a , p, function(valeurRetour){
@@ -254,9 +263,20 @@ function formatListeTitre(liste){
   var divDebut = '<div class="text-left module_recherche suggest">';
   var finale = '';
   if (Array.isArray(liste)){
-    for (var i = 0; i < liste.length; i++) {
+    for (var i = 0; i < liste.length-1; i++) {
       finale += divDebut + '<a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">';
       finale += liste[i].annonce.titre + '</a></div>';
+    }
+  }
+  return finale;
+}
+function formatListePseudo(liste){
+  var divDebut = '<div class="text-left module_recherche suggest">';
+  var finale = '';
+  if (Array.isArray(liste)){
+    for (var i = 0; i < liste.length-1; i++) {
+      finale += divDebut;
+      finale += liste[i].annonce.pseudo + '</div>';
     }
   }
   return finale;
@@ -278,6 +298,7 @@ function formatListeAnnnonces(liste){
       if (liste[i].annonce.photos.photo5)  finale += '<img src="' + liste[i].annonce.photos.photo5 + '" style="max-width: 20%; height: auto;"></img> ';
 
       finale += '<br>' + liste[i].annonce.titre ;
+      finale += '<br>' + liste[i].annonce.pseudo ;
       finale += '<br><strong>'+ liste[i].annonce.prix +'</strong>';
       finale += '<br>' + liste[i].annonce.description_courte;
       finale += '<br>' + liste[i].annonce.ville + '  --  ' + liste[i].annonce.pays;

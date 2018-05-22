@@ -11,6 +11,7 @@ function initRecherche(){
   $_SESSION['recherche']['prixMini'] = 0;
   $_SESSION['recherche']['prixMax'] = 999999;
   $_SESSION['recherche']['membre_id'] = '';
+  $_SESSION['recherche']['pseudo'] = '';
 }
 
 function makeSearch(){
@@ -18,38 +19,73 @@ function makeSearch(){
   //retourne la liste des id d'annonces , 0 sinon
   global $bdd;
   $and = false;
-  $requete = 'SELECT id_annonce FROM annonce WHERE ';
+  $joinPseudo = false;
+  $requete = 'SELECT id_annonce FROM annonce ';
+  if (isset($_SESSION['recherche']['pseudo']) && !empty($_SESSION['recherche']['pseudo'])){
+    $requete .= 'LEFT JOIN membre ON annonce.membre_id = membre.id_membre ';
+    $joinPseudo = true;
+  }
+  $requete .= 'WHERE ';
+
+  if ($joinPseudo){
+    $pseudo = $_SESSION['recherche']['pseudo'];
+    $requete .= "membre.pseudo LIKE '%$pseudo%'";
+    $and = true;
+  }
 
   if (!empty($_SESSION['recherche']['categorie_id'])) {
+    if ($and) $requete .= ' AND ';
+    if ($joinPseudo){
+      $requete .= 'annonce.';
+    }
     $requete .= 'categorie_id = '.$_SESSION['recherche']['categorie_id'].' ';
     $and = true;
   }
 
   if (!empty($_SESSION['recherche']['pays_id'])) {
     if ($and) $requete .= ' AND ';
+    if ($joinPseudo){
+      $requete .= 'annonce.';
+    }
     $requete .= 'pays = '.$_SESSION['recherche']['pays_id'].' ';
     $and = true;
   }
 
   if (!empty($_SESSION['recherche']['ville'])) {
     if ($and) $requete .= ' AND ';
+    if ($joinPseudo){
+      $requete .= 'annonce.';
+    }
     $requete .= 'ville = '.$_SESSION['recherche']['ville'].' ';
     $and = true;
   }
 
   if ( isset($_SESSION['recherche']['titre']) && !empty($_SESSION['recherche']['titre'])) {
     if ($and) $requete .= ' AND ';
+    if ($joinPseudo){
+      $requete .= 'annonce.';
+    }
     $requete .= 'titre LIKE \'%'.$_SESSION['recherche']['titre'].'%\' ';
     $and = true;
   }
 
   if ($and) $requete .= ' AND ';
+  if ($joinPseudo){
+    $requete .= 'annonce.';
+  }
   $requete .= 'prix > '.$_SESSION['recherche']['prixMini'].' ';
   $requete .= ' AND ';
+  if ($joinPseudo){
+    $requete .= 'annonce.';
+  }
   $requete .= 'prix < '.$_SESSION['recherche']['prixMax'].' ';
   $and = true;
 
-  $requete .= ' ORDER BY '.$_SESSION['recherche']['orderby'].' ';
+  $requete .= ' ORDER BY ';
+  if ($joinPseudo){
+    $requete .= 'annonce.';
+  }
+  $requete .= $_SESSION['recherche']['orderby'].' ';
   $requete .= $_SESSION['recherche']['sens'];
 
   $req_annonces = $bdd->query($requete);
