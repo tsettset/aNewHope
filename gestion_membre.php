@@ -145,14 +145,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
         </form>
     </div>
 </div>
-<script>
-/*document.getElementById('inscriSubmit').addEventListener('click',function(){
-       var test= document.getElementById('form').style.display="none";
-    console.log(test);
- 
-});*/
-    
-</script>
+
 <?php 
     
     //header('Location:gestion_membre');

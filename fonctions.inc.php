@@ -60,4 +60,10 @@ function validePostEmail($emailPostName){
   //returns empty string if set but not valid email
   return (filter_input(INPUT_POST, $emailPostName, FILTER_VALIDATE_EMAIL));
 }
+
+//---------------------Fonctions degage()------------------------------------
+
+function degage(){
+  header("Location: katsanscat.php");
+}
 ?>

@@ -15,7 +15,7 @@ require_once ('header.inc.php');
   </div>
   <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
-      <li><a href="#">Qui nous sommes nous ?</a></li>        
+      <li><a href="#">Qui sommes nous ?</a></li>        
       <li><a href="contact.php">Contact</a></li>  
       <li><a href="#">Annonces</a></li>
       <?php if(internauteEstConnecteEtEstAdmin()){ 
@@ -26,11 +26,6 @@ require_once ('header.inc.php');
   echo '<li><a href="gestion_annonce.php">Gestion_annonce</a></li>';
   echo '<li><a href="statistique.php">Statistiques</a></li>';
 }  ?>
-    </ul>
-    <ul class="nav navbar-nav col-md-2">
-      <li style="width:80%"><form style="margin-top:8px;">
-        <input type="text" class="form-control" placeholder="Search...">
-        </form></li>
     </ul>
     <ul class="nav navbar-nav navbar-right" style="margin-right :10px;">
       <li class="dropdown">
