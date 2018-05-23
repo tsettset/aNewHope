@@ -15,15 +15,15 @@ require_once ('header.inc.php');
   </div>
   <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
-      <li><a href="#">Qui sommes nous ?</a></li>
+      <li><a href="contact.php">Qui sommes nous ?</a></li>
       <li><a href="contact.php">Contact</a></li>
-      <li><a href="#">Annonces</a></li>
+      <li><a href="accueil.php">Annonces</a></li>
       <?php if(internauteEstConnecteEtEstAdmin()){
-        echo '<li><a href="gestion_membre.php">Gestion_membre</a></li>';
-        echo '<li><a href="gestion_commentaire.php">Gestion_commentaire</a></li>';
-        echo '<li><a href="gestion_note.php">Gestion_note</a></li>';
-        echo '<li><a href="gestion_categorie.php">Gestion_catégorie</a></li>';
-        echo '<li><a href="gestion_annonce.php">Gestion_annonce</a></li>';
+        echo '<li><a href="gestion_membre.php">Gestion membre</a></li>';
+        echo '<li><a href="gestion_commentaire.php">Gestion commentaire</a></li>';
+        echo '<li><a href="gestion_note.php">Gestion note</a></li>';
+        echo '<li><a href="gestion_categorie.php">Gestion catégorie</a></li>';
+        echo '<li><a href="gestion_annonce.php">Gestion annonce</a></li>';
         echo '<li><a href="statistique.php">Statistiques</a></li>';
       }  ?>
     </ul>
@@ -36,7 +36,7 @@ require_once ('header.inc.php');
             echo '<li style="font-size: 20px;"><a href="connexion.php">Connexion</a></li>';
 
           }else{
-            
+
             echo'<li style="font-size: 20px;"><a href="profil.php">Profil</a></li>';
             echo'<li><a href="connexion.php?action=deconnexion" style="font-size: 20px; margin-top:10px;">Déconnexion</a></li>';
           }?>

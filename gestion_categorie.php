@@ -16,7 +16,7 @@ global $bdd;
 
 
 ?>
-
+<div class="row" style="min-height:150px"></div>
 <div class="container">
   <div class="row">
     <div class="col-xs-8 col-xs-offset-2 text-center">
@@ -59,7 +59,7 @@ global $bdd;
   <div id="liste_categorie">
   </div>
 
-  <div class="row" style="min-height: 20px; "></div>
+  <div class="row" style="min-height:150px"></div>
 
 </div>
 
@@ -76,6 +76,7 @@ $(document).ready(function(){
       if (valeurRetour.valide==0){
         if (valeurRetour.err_message){
           $('#err_message').html(valeurRetour.err_message);
+          $('#err_message').fadeOut(2500);
         }
       } else {
         $('#titre_add').val('');
@@ -107,6 +108,7 @@ $(document).ready(function(){
       if (valeurRetour.valide==0){
         if (valeurRetour.err_message){
           $('#err_message').html(valeurRetour.err_message);
+          $('#err_message').fadeOut(2500);
         }
       }
     },'json');//fin $.post

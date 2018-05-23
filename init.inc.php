@@ -3,7 +3,7 @@
 try{
   global $bdd;
   $bdd = new PDO('mysql:host=localhost; dbname=troc','root', 'root', array(PDO::ATTR_ERRMODE =>PDO::ERRMODE_WARNING, PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-}
+}// trocster - vXsRVoa16x4ro8YM
 catch (Exception $e)
 {
 
@@ -24,11 +24,11 @@ catch (Exception $e){
 
 //-------------------- CHEMIN
 
-define("RACINE_SITE", $_SERVER['DOCUMENT_ROOT']. "/aNewHope/");
+define("RACINE_SITE", $_SERVER['DOCUMENT_ROOT']. "/aNewHope/");///projettroc/
 /* cette constante retourne le chemin physique du dossier boutique sur le serveur
 Lors de l'enregistrement d'images / photos, nous aurons besoin du chemin complet du dossier photo pour enregistrer la photo */
 
-define("URL", 'http://localhost/aNewHope/');
+define("URL", 'http://localhost/projettroc/');
 
 //cette constante nous servira à enregistrer l'URL d'une photo / image dans la BDD, on ne conserve jamais la photo elle même, ce serait trop lourd pour la BDD
 

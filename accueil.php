@@ -20,6 +20,7 @@ if (isset($_POST) && !empty($_POST)){
 }
 // debug ($_SESSION);
 ?>
+<div class="row" style="min-height:50px"></div>
 <div class="container">
   <div class="row">
     <div class="col-xs-4 module_recherche">
@@ -131,7 +132,7 @@ if (isset($_POST) && !empty($_POST)){
 
   </div><!--fin row-->
 </div><!--fin container-->
-
+<div class="row" style="min-height:150px"></div>
 <script>
 $(document).ready(function(){
 

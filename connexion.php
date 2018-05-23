@@ -7,7 +7,7 @@ if(isset($_GET['action']) && $_GET['action']=="deconnexion"){
 
    session_destroy();
    header('Location: inscription.php');
-  
+
 }
 
 
@@ -28,13 +28,13 @@ if($_POST){
       $_SESSION['id_membre']=$donnees['id_membre'] ;
       $_SESSION['pseudo']=$donnees['pseudo'] ;
       $_SESSION['statut']=$donnees['statut'];
-      //debug($_SESSION);
+      // debug($_SESSION);
       echo 'vous êtes bien connecté';
 
 
 
       //debug($_SESSION);
-      /*internauteEstConnecte();   
+      /*internauteEstConnecte();
 
       header('Location: profil.php');*/
 
@@ -44,7 +44,7 @@ if($_POST){
       }
 
    }else {
-
+     // debug($_SESSION);
       echo ' votre mot de passe et/ou pseudo sont erronés, veuillez recommencer';
    }
 }

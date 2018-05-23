@@ -27,6 +27,7 @@ require_once('footer.php');
 
 function showForm($annonce){
   ?>
+  <div class="row" style="min-height:30px"></div>
   <div class="container segment-annonce">
     <div class="row">
       <div class="col-xs-8 col-xs-offset-2 text-center">
@@ -214,5 +215,6 @@ function showForm($annonce){
     </div>
     <?php include ('commpi.php'); ?>
   </div>
+  <div class="row" style="min-height:30px"></div>
   <?php
 }

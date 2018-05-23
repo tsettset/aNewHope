@@ -159,10 +159,6 @@ function showVilles(){
   }
   params += '&ville='+ville;
   $.post('fannonce.ajax.php?action=getvilles', params, function(valeurRetour){
-<<<<<<< HEAD
-    console.log(valeurRetour.arg1);
-=======
->>>>>>> 4e8a18de51e455f974f334a88edfe71273ccb0fc
     if (valeurRetour.valide == 1){
       $('#ville_select').html(valeurRetour.optionList);
     }
@@ -177,7 +173,7 @@ require_once('footer.php');
 
 //----------- Fonctions
 function ShowForm($check){?>
-
+<div class="row" style="min-height:30px"></div>
   <div class="container">
     <div class="row" style="padding-top:10px">
       <div class="col-md-8 col-md-offset-2 text-center">
@@ -334,7 +330,7 @@ function ShowForm($check){?>
       <?php
     endif;?>
   </div><!-- container-fluid -->
-  <div class="row" style="min-height:100px"></div>
- 
+  <div class="row" style="min-height:30px"></div>
+
   <?php
 }?>
