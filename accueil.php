@@ -5,23 +5,20 @@ require_once ('navbar.php');
 require_once ('footer.php');
 
 
-//require_once('init.inc.php');
+
 require_once('accueil.fonctions.php');
 initRecherche();
-//require_once('fonctions.inc.php');
-//require_once('header.inc.php');
 require_once('annonce.fonctions.php');
 require_once('fannonce.fonctions.php');
 
-//require_once('navbar.php');
-
-// debug (makeSearch());
+//debug (makeSearch());
 $check = array();
 if (isset($_POST) && !empty($_POST)){
   // debug($_POST);
   $check = laveRecherchePost($_POST);
   // debug($check);
 }
+// debug ($_SESSION);
 ?>
 <div class="container">
   <div class="row">
@@ -63,8 +60,16 @@ if (isset($_POST) && !empty($_POST)){
           </div>
           <div class="col-xs-10 col-xs-offset-1">
             <div class="form-group">
+              <label for="pseudo">Pseudo de l'auteur</label>
+              <input type="text" name="pseudo" id="pseudo" class="form-control" placeholder="Rechercher par pseudo de l'auteur" />
+            </div>
+            <div id="pseudo_suggest">
+            </div>
+          </div>
+          <div class="col-xs-10 col-xs-offset-1">
+            <div class="form-group">
               <label for="titre">Titre de l'annonce contient</label>
-              <input type="text" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" />
+              <input type="text" title="entrez au moins 3 caracteres" name="titre" id="titre" class="form-control" placeholder="Rechercher par titre de l'annonce" />
             </div>
             <div id="titre_suggest">
             </div>
@@ -79,11 +84,11 @@ if (isset($_POST) && !empty($_POST)){
               <input type="number" name="prix_max" id="prix_max" title="inferieur a 999999">
             </div>
           </div>
-          <div class="col-xs-10 col-xs-offset-1" >
+          <!-- <div class="col-xs-10 col-xs-offset-1" >
             <div class="form-group">
               <button type="submit" class="btn btn-primary">appliquer ces criteres</button>
             </div>
-          </div>
+          </div> -->
         </div>
       </form>
     </div><!--fin module_recherche-->
@@ -176,9 +181,23 @@ $(document).ready(function(){
       populateTitre();
     } else {
       $('#titre_suggest').html('');
+      recherche('reset','p=titre');
     }
 
   });//fin titre.on('input')
+
+  //--------------Recherche Pseudo Auteur-------------------------------------------------
+  $('#pseudo').on('input',function(){
+    var params = 'pseudo=' + $(this).val();
+    if (params.length - 7 > 2){
+      recherche('pseudo', params);
+      populatePseudo();
+    } else {
+      $('#pseudo_suggest').html('');
+      recherche('reset','p=pseudo');
+    }
+
+  });//fin pseudo.on('input')
 
   //--------------Prix Mini--------------------------------------------------
   $('#prix_min').on('input',function(){
@@ -193,10 +212,10 @@ $(document).ready(function(){
   });//fin prix_min.on('change')
 
   //--------------formulaire de recherche complet--------------------------
-  $('#form_recherche').on('submit',function(event){
-    event.preventDefault();
-    recherche('f','p=na');
-  });//fin $.form_recherche
+  // // $('#form_recherche').on('submit',function(event){
+  // //   event.preventDefault();
+  // //   recherche('f','p=na');
+  // });//fin $.form_recherche
 
   //--------------FIN gestion du formulaire de recherche----------------------
 
@@ -221,14 +240,22 @@ function populateTitre(){//post une recherche avec les parametres actuels et aff
       $('#titre_suggest').html(finale);
     }
   },'json');//fin $.post
-
-  // $('#suggest').on('click',function(event){
-  //   console.log('on est dedans');
-  //   // console.log($(this).html());
-  //
-  // });//fin suggest.on(click)
-  // $('#suggest').html('Hello world');
 }//fin populateTitre
+
+function populatePseudo(){//post une recherche avec les parametres actuels et affiche les suggestions de titre
+  $.post('accueil.ajax.php?action=f' , 'p=na', function(valeurRetour){
+    if (valeurRetour.valide == 1){
+      var finale = formatListePseudo(valeurRetour.liste_annonces);
+      $('#pseudo_suggest').html(finale);
+    }
+  },'json');//fin $.post
+
+  $('#pseudo_suggest').on('click', '.val_pseudo', function(event){
+    event.preventDefault();
+    $('#pseudo').val($(this).attr('value'));
+  });
+}//fin populatePseudo
+
 
 function recherche(a,p){//post en ajax avec a en get[action] et p en post puis affiche le resultat dans les annonces
   $.post('accueil.ajax.php?action='+a , p, function(valeurRetour){
@@ -240,12 +267,24 @@ function recherche(a,p){//post en ajax avec a en get[action] et p en post puis a
 }
 
 function formatListeTitre(liste){
-  var divDebut = '<div class="text-left module_recherche suggest">';
+  var divDebut = '<div class="text-left module_recherche titre_suggest">';
   var finale = '';
   if (Array.isArray(liste)){
-    for (var i = 0; i < liste.length; i++) {
+    for (var i = 0; i < liste.length-1; i++) {
       finale += divDebut + '<a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">';
       finale += liste[i].annonce.titre + '</a></div>';
+    }
+  }
+  return finale;
+}
+function formatListePseudo(liste){
+  var divDebut = '<div class="text-left module_recherche pseudo_suggest">';
+  var finale = '';
+  if (Array.isArray(liste)){
+    for (var i = 0; i < liste.length-1; i++) {
+      finale += divDebut;
+      finale += '<a href="#" class="val_pseudo" value="' + liste[i].annonce.pseudo + '">' + liste[i].annonce.pseudo + '</a>';
+      finale += '</div>';
     }
   }
   return finale;
@@ -257,7 +296,7 @@ function formatListeAnnnonces(liste){
   if (liste == 0){
     finale += divDebut + '<em>Pas de resultat</em>' + '</div>';
   } else {
-    for (var i = 0; i < liste.length; i++) {
+    for (var i = 0; i < liste.length-1; i++) {
       // console.table(liste);
       finale += divDebut;
       if (liste[i].annonce.photos.photo1)  finale += '<img src="' + liste[i].annonce.photos.photo1 + '" style="max-width: 20%; height: auto;"></img> ';
@@ -267,6 +306,7 @@ function formatListeAnnnonces(liste){
       if (liste[i].annonce.photos.photo5)  finale += '<img src="' + liste[i].annonce.photos.photo5 + '" style="max-width: 20%; height: auto;"></img> ';
 
       finale += '<br>' + liste[i].annonce.titre ;
+      finale += '<br>' + liste[i].annonce.pseudo ;
       finale += '<br><strong>'+ liste[i].annonce.prix +'</strong>';
       finale += '<br>' + liste[i].annonce.description_courte;
       finale += '<br>' + liste[i].annonce.ville + '  --  ' + liste[i].annonce.pays;
@@ -274,7 +314,7 @@ function formatListeAnnnonces(liste){
       finale += '<br><a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">Consulter l\'annonce</a>';
       finale += '</div>';
     }
-    // finale +=divDebut + '<?php// if(isset($_SESSION['recherche']['requete']))  echo $_SESSION['recherche']['requete']; ?>' + '</div>';
+    finale += divDebut + liste[liste.length-1].requete + '</div>';
   }
   return finale;
 }
@@ -299,4 +339,3 @@ function showVilles(){
 <?php
 require_once ('footer.php');
 ?>
-

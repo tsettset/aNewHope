@@ -33,7 +33,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])){
         $check['valide'] = 0;
       } else {
         $check = getAnnonceModif($annonceAModif, $check);
-        if ($check['id_membre'] !== $check['membre_id']) {
+        if (($check['id_membre'] !== $check['membre_id']) && ($_SESSION['statut'] == 0)) {
           degage();
         }
       }
@@ -322,8 +322,15 @@ function ShowForm($check){?>
           >
         </div>
         <button type="submit" name="save_form" id="save_form" class="btn btn-primary btn-lg btn-block">Enregistrer</button>
-
       </form>
+      <?php if ($check['status'] == 'm'){ ?>
+        <!-- <a href="sannonce.php?id_annonce=<?php //echo $check['id_annonce']; ?>">Supprimer</a> -->
+        <form method="post" action="sannonce.php?id_annonce=<?php echo $check['id_annonce']; ?>">
+          <button type="submit" name="" class="btn btn-danger btn-lg btn-block">Supprimer</button>
+        </form>
+      <?php
+      } ?>
+
       <?php
     endif;?>
   </div><!-- container-fluid -->

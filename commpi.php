@@ -45,6 +45,19 @@ if (!empty($annonce['commentaires'])){
       <div class="col-xs-8 col-xs-offset-2 text-center">
         <?php echo $value['commentaire'].'<br>';?>
       </div>
+      <div class="col-xs-8 col-xs-offset-2 text-center">
+        <?php
+        if (isset($_SESSION['id_membre'])){
+          echo '<form method="post">';
+          if ($_SESSION['id_membre'] == $value['membre_id']){
+            echo '<button type="submit" class="btn btn-danger">Supprimer votre message</button>';
+          } elseif ($_SESSION['statut'] == 1) {
+            echo '<button type="submit" class="btn btn-danger">Supprimer le message de ce membre</button>';
+          }
+          echo '</form>';
+        }
+        ?>
+      </div>
     </div>
     <?php
   }

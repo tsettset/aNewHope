@@ -28,12 +28,12 @@ function internauteEstConnecte(){
   if(!isset($_SESSION['id_membre'])){ // si session membre n'est pas defini, cela veut dire que l'internaute n'est pas passe par la page inscription
 
     return false;
-    
+
   }else{
 
     return true;
-   
-    
+
+
   }
 }
 //------------------------------------------------------------------
@@ -60,6 +60,7 @@ function validePostEmail($emailPostName){
   //returns empty string if set but not valid email
   return (filter_input(INPUT_POST, $emailPostName, FILTER_VALIDATE_EMAIL));
 }
+
 
 //---------------------Fonctions degage()------------------------------------
 

@@ -8,11 +8,9 @@ require_once('footer.php');
 
 $annonce = array ();
 $comm_msg = '';
-
-
 if(isset($_GET['id']) && !empty($_GET['id'])){
 
-  if(isset($_POST['post_comment']) && !empty($_POST['post_comment'])){
+  if(isset($_POST['post_comment']) && !empty($_POST['post_comment']) && isset($_SESSION['id_membre'])){
     $comm_msg = insertCommentaire($_POST['post_comment'], intval($_GET['id']), $_SESSION['id_membre']);
   }
 
@@ -36,7 +34,7 @@ function showForm($annonce){
       </div>
     </div>
     <?php
-    if (!empty($_SESSION['id_membre']) && $_SESSION['id_membre'] == $annonce['membre_id']){ ?>
+    if ( (!empty($_SESSION['id_membre']) && $_SESSION['id_membre'] == $annonce['membre_id']) || (isset($_SESSION['statut']) && $_SESSION['statut'] == 1)){ ?>
       <div class="row">
         <div class="col-xs-8 col-xs-offset-2 text-center">
           <a href="fannonce.php?action=m&annonce=<?= $annonce['id_annonce']; ?>">Modifier cette annonce</a>
