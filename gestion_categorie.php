@@ -70,9 +70,6 @@ $(document).ready(function(){
   //-------------------AJOUT-------------------------------------------------------------
 
   $('#form_add').on('submit', function(event){
-    //pour les events dynamiques (= events sur elements ajoutes dynamiquement dans la page)
-    //il faut attacher l'event par le parent, ainsi des la creation des elements ils auront deja
-    //l'event
     event.preventDefault();
     var param = $('#form_add').serialize();
     $.post('gestion_categorie.ajax.php?action=add' , param, function(valeurRetour){

@@ -247,6 +247,11 @@ function populatePseudo(){//post une recherche avec les parametres actuels et af
       $('#pseudo_suggest').html(finale);
     }
   },'json');//fin $.post
+
+  $('#pseudo_suggest').on('click', '.val_pseudo', function(event){
+    event.preventDefault();
+    $('#pseudo').val($(this).attr('value'));
+  });
 }//fin populatePseudo
 
 
@@ -260,7 +265,7 @@ function recherche(a,p){//post en ajax avec a en get[action] et p en post puis a
 }
 
 function formatListeTitre(liste){
-  var divDebut = '<div class="text-left module_recherche suggest">';
+  var divDebut = '<div class="text-left module_recherche titre_suggest">';
   var finale = '';
   if (Array.isArray(liste)){
     for (var i = 0; i < liste.length-1; i++) {
@@ -271,12 +276,13 @@ function formatListeTitre(liste){
   return finale;
 }
 function formatListePseudo(liste){
-  var divDebut = '<div class="text-left module_recherche suggest">';
+  var divDebut = '<div class="text-left module_recherche pseudo_suggest">';
   var finale = '';
   if (Array.isArray(liste)){
     for (var i = 0; i < liste.length-1; i++) {
       finale += divDebut;
-      finale += liste[i].annonce.pseudo + '</div>';
+      finale += '<a href="#" class="val_pseudo" value="' + liste[i].annonce.pseudo + '">' + liste[i].annonce.pseudo + '</a>';
+      finale += '</div>';
     }
   }
   return finale;
