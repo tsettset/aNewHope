@@ -18,7 +18,7 @@ $email=" ";
 
 if(isset($_POST['inscriSubmit'])){
 
-  if(!preg_match("/[a-zA-Z0-9]{2,12}/", $_POST['pseudo'])||!preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/", $_POST['mdp'])||!preg_match("/[a-zA-Z]{2,20}/", $_POST['nom'])||!preg_match("/[a-zA-Z]{2,15}/", $_POST['prenom'])||!preg_match("/[0-9]{10,20}/" , $_POST['telephone'])||!preg_match("/[a-z]{3,}[@]{1}[a-z]{3,}[.]{1}[comfr]{2,3}/" , $_POST['email'])){
+  if(!preg_match("/[a-zA-Z0-9]{2,12}/", $_POST['pseudo'])||!preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-=]).{8,}$/", $_POST['mdp'])||!preg_match("/[a-zA-Z]{2,20}/", $_POST['nom'])||!preg_match("/[a-zA-Z]{2,15}/", $_POST['prenom'])||!preg_match("/[0-9]{10,20}/" , $_POST['telephone'])||!preg_match("/[a-z]{3,}[@]{1}[a-z]{3,}[.]{1}[comfr]{2,3}/" , $_POST['email'])){
 
 
 
@@ -26,7 +26,7 @@ if(isset($_POST['inscriSubmit'])){
 
       $pseudo='<div class="alert alert-danger"> Vous devez saisir un pseudo entre 2 et 12 caracteres et qui ne contient pas de caractères spéciaux</div>';
     }
-    if(!preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/", $_POST['mdp'])){
+    if(!preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-=]).{8,}$/", $_POST['mdp'])){
 
       $mdp='<div class="alert alert-danger"> Votre mot de passe doit comprendre au moins une majuscule, au moins une minuscule, au moins un chiffre, au moins un caractère spécial et doi être d\'une longueur de 8 caractères au minimum</div>';
     }
