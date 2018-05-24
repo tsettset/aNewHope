@@ -97,6 +97,15 @@ if (isset($_POST) && !empty($_POST)){
     <div class="col-xs-8">
       <div class="row" >
         <div class="col-xs-10 col-xs-offset-1 text-center">
+          <span><?php
+          if (internauteEstConnecte()){
+            echo '<a href="fannonce.php?action=c">Deposer une annonce</a>';
+          } else {
+            echo '<em>Connectez-vous pour deposer votre annonce</em>';
+          }
+          ?></span>
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 text-center">
           <h3>Les annonces selon vos criteres de recherche </h3>
         </div>
         <div class="col-xs-5 col-xs-offset-1 text-center">

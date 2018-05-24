@@ -330,7 +330,7 @@ function ShowForm($check){?>
       <?php
     endif;?>
   </div><!-- container-fluid -->
-  <div class="row" style="min-height:30px"></div>
+  <div class="row" style="min-height:100px"></div>
 
   <?php
 }?>
