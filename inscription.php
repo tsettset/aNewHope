@@ -28,7 +28,7 @@ if(isset($_POST['inscriSubmit'])){
     }
     if(!preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-=]).{8,}$/", $_POST['mdp'])){
 
-      $mdp='<div class="alert alert-danger"> Votre mot de passe doit comprendre au moins une majuscule, au moins une minuscule, au moins un chiffre, au moins un caractère spécial et doi être d\'une longueur de 8 caractères au minimum</div>';
+      $mdp='<div class="alert alert-danger"> Votre mot de passe doit comprendre au moins une majuscule, au moins une minuscule, au moins un chiffre, au moins un caractère spécial et doit être d\'une longueur de 8 caractères au minimum</div>';
     }
 
 

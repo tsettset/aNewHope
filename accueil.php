@@ -198,6 +198,7 @@ $(document).ready(function(){
 
   //--------------Recherche Pseudo Auteur-------------------------------------------------
   $('#pseudo').on('input',function(){
+    console.log('input fired');
     var params = 'pseudo=' + $(this).val();
     if (params.length - 7 > 2){
       recherche('pseudo', params);
@@ -221,25 +222,18 @@ $(document).ready(function(){
     recherche('prix_max', params);
   });//fin prix_min.on('change')
 
+  //-------------on prepare l'affichage de select pays et ville---------------
+  showVilles();
+
+
   //--------------formulaire de recherche complet--------------------------
   // // $('#form_recherche').on('submit',function(event){
   // //   event.preventDefault();
   // //   recherche('f','p=na');
   // });//fin $.form_recherche
+  recherche('f','p=na');//on lance une recherche telle quelle au rafrachissement
 
   //--------------FIN gestion du formulaire de recherche----------------------
-
-  //-------------on prepare l'affichage de select pays et ville---------------
-  //on commence par recuperer le pays selectionne
-  //   var pays_selected = $('#pays').find(':selected').val();
-  //   //on met dans "var ville" la ville selectionnee pour la reposter en cas de modif
-  // var ville = '<?php// echo (isset($check['ville'])) ? $check['ville'] : '0';?>';
-  //   if (ville == '0'){
-  //   $('#ville_select').html('<em><select class="form-control"><option value="na">---</option></select></em>');
-  // }else if (pays_selected) {//sinon appeler la fonction d'affichage de villes
-  showVilles();
-  // }
-  recherche('f','p=na');//on lance une recherche telle quelle au rafrachissement
 
 });// Fin DR
 
@@ -255,6 +249,7 @@ function populateTitre(){//post une recherche avec les parametres actuels et aff
 function populatePseudo(){//post une recherche avec les parametres actuels et affiche les suggestions de titre
   $.post('accueil.ajax.php?action=f' , 'p=na', function(valeurRetour){
     if (valeurRetour.valide == 1){
+      // console.table(valeurRetour.liste_annonces);
       var finale = formatListePseudo(valeurRetour.liste_annonces);
       $('#pseudo_suggest').html(finale);
     }
@@ -262,7 +257,8 @@ function populatePseudo(){//post une recherche avec les parametres actuels et af
 
   $('#pseudo_suggest').on('click', '.val_pseudo', function(event){
     event.preventDefault();
-    $('#pseudo').val($(this).attr('value'));
+    $('#pseudo').val($(this).attr('value')).trigger('input');
+
   });
 }//fin populatePseudo
 
@@ -290,11 +286,18 @@ function formatListeTitre(liste){
 function formatListePseudo(liste){
   var divDebut = '<div class="text-left module_recherche pseudo_suggest">';
   var finale = '';
+  var pseudos = new Array();
   if (Array.isArray(liste)){
     for (var i = 0; i < liste.length-1; i++) {
-      finale += divDebut;
-      finale += '<a href="#" class="val_pseudo" value="' + liste[i].annonce.pseudo + '">' + liste[i].annonce.pseudo + '</a>';
-      finale += '</div>';
+      pseudos.push(liste[i].annonce.pseudo);
+    }
+    pseudos.sort();
+    for (var i = 0; i < liste.length-1; i++) {
+      if (pseudos[i] !== pseudos[i-1]){
+        finale += divDebut;
+        finale += '<a href="#" class="val_pseudo" value="' + pseudos[i] + '">' + pseudos[i] + '</a>';
+        finale += '</div>';
+      }
     }
   }
   return finale;
