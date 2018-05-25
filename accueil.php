@@ -327,7 +327,7 @@ function formatListeAnnnonces(liste){
       finale += '<br><a href="annonce.php?id='+ liste[i].annonce.id_annonce +'" title="consulter l\'annonce">Consulter l\'annonce</a>';
       finale += '</div>';
     }
-    finale += divDebut + liste[liste.length-1].requete + '</div>';
+    // finale += divDebut + liste[liste.length-1].requete + '</div>';
   }
   return finale;
 }

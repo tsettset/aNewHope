@@ -29,7 +29,7 @@ if(isset($_GET['action'])&& $_GET['action']=="suppression"){
 }
 
 echo $content;
-/*if(isset($_GET['action']) && $_GET['action']=="modification"){ ?>  
+/*if(isset($_GET['action']) && $_GET['action']=="modification"){ ?>
 <div class="container">
     <div class="jumbotron">
         <form id="form" method="post" action="#">
@@ -70,9 +70,9 @@ echo $content;
     if(isset($_POST['inscriSubmit'])){
 
         $maj=$bdd->prepare("update categorie set motscles=:mcles, titre=:titre where id_categorie=:id");
-        $maj->bindValue(':id', $_GET['id'], PDO::PARAM_INT);   
+        $maj->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
         $maj->bindValue(':titre', $_POST['titre'], PDO::PARAM_STR);
-        $maj->bindValue(':mcles', $_POST['motscles'], PDO::PARAM_STR);      
+        $maj->bindValue(':mcles', $_POST['motscles'], PDO::PARAM_STR);
         $maj->execute();
 
         $content .='<div class="alert alert-success col-md-8 col-md-offset-2 text-center">La catégorie '.$_GET['id'].' a bien été modfiée ! </div>';
@@ -91,17 +91,17 @@ echo $content;
     <table class="table table-striped" style="border: 1px solid darkblue; width:100%">
         <tr class="info">
             <th>id_commentaire</th>
-            <th>id_membre</th>       
+            <th>id_membre</th>
             <th>id_annonce</th>
             <th>Commentaires</th>
             <th>Date_enregistrement</th>
             <th>Actions</th>
         </tr>
 
-        <?php 
+        <?php
 
     for ($i=0; $i<$req->rowCount(); $i++){
-        debug($donnees[$i]);
+        // debug($donnees[$i]);
         echo '</tr>';
         echo'<td>'.$donnees[$i]['id_commentaire'].'</td>';
         echo'<td>'.$donnees[$i]['membre_id'].'</td>';
@@ -110,16 +110,16 @@ echo $content;
         echo'<td>'.$donnees[$i]['date_enregistrement'].'</td>';
         echo'<td><a href="gestion_commentaire.php?action=recherche&id='.$donnees[$i]['id_commentaire'].'"><span class="glyphicon glyphicon-search">&nbsp;</span></a><a href="gestion_commentaire.php?action=suppression&id='.$donnees[$i]['id_commentaire'].'"><span class="glyphicon glyphicon-trash"></span></a></td>';
         echo '<tr>';
-    } 
+    }
 
 ?>
 
    </table>
 </div>
 
-   
 
- 
+
+
 <br><br><br><br>
 <?php
     require_once('footer.php');

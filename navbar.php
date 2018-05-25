@@ -23,7 +23,7 @@ require_once ('header.inc.php');
         echo '<li><a href="gestion_commentaire.php">Gestion commentaire</a></li>';
         echo '<li><a href="gestion_note.php">Gestion note</a></li>';
         echo '<li><a href="gestion_categorie.php">Gestion catégorie</a></li>';
-        echo '<li><a href="gestion_annonce.php">Gestion annonce</a></li>';
+        // echo '<li><a href="gestion_annonce.php">Gestion annonce</a></li>';
         echo '<li><a href="statistique.php">Statistiques</a></li>';
       }  ?>
     </ul>
