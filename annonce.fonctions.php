@@ -1,5 +1,38 @@
 <?php
 
+function avgNoteParUser($user_id){
+  global $bdd;
+  $req_moyenne = $bdd->query("SELECT AVG (note) FROM note WHERE membre_id2 = $user_id");
+  return ($req_moyenne->fetch(PDO::FETCH_NUM)) ;
+}
+
+function getNoteMembres($membre1, $membre2){
+  global $bdd;
+  $req_getNote = $bdd->query("SELECT * FROM note WHERE membre_id1 = $membre1 AND membre_id2 = $membre2");
+  if ($req_getNote->rowCount() > 0){
+    return ($req_getNote->fetch(PDO::FETCH_ASSOC));
+  } else {
+    return 0;
+  }
+}
+
+function supprimeAnnonce($id_note){
+  global $bdd;
+  $req_supprime = $bdd->exec("DELETE FROM note WHERE id_note=$id_note");
+  return ($req_supprime);
+}
+
+function ajouteNote($membre_id1, $membre_id2, $note, $avis){
+   global $bdd;
+   $req_insert = $bdd->prepare("INSERT INTO note (note, avis, membre_id1, membre_id2, date_enregistrement) VALUES (:note, :avis, :membre_id1, :membre_id2, NOW())");
+   $req_insert->bindValue(':note', $note, PDO::PARAM_INT);
+   $req_insert->bindValue(':avis', $avis, PDO::PARAM_STR);
+   $req_insert->bindValue(':membre_id1', $membre_id1, PDO::PARAM_INT);
+   $req_insert->bindValue(':membre_id2', $membre_id2, PDO::PARAM_INT);
+
+   return($req_insert->execute());
+}
+
 function getAnnonce($idAnnonce){
   global $bdd;
   $req_annonce = $bdd->prepare("SELECT * FROM annonce WHERE id_annonce=:id");

@@ -73,7 +73,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
 //debug($donnees, 2);
 ?>
 
-   
+
 <div class="container">
     <div class="jumbotron">
         <form id="form" method="post" action="#">
@@ -134,22 +134,22 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
                 <div class="col-md-2 col-md-offset-8">
                     <label for="statut">Statut :</label>
                     <select name="statut" class="form-control">
-                        <option value="admin" <?php if($value['statut']=="admin"){ echo 'selected="selected"';}?>>Admin</option>
-                        <option value="membre" <?php if($value['statut']=="membre"){ echo 'selected="selected"';}?>>Membre</option>   
+                        <option value="admin" <?php if($value['statut']==1){ echo 'selected="selected"';}?>>Admin</option>
+                        <option value="membre" <?php if($value['statut']==0){ echo 'selected="selected"';}?>>Membre</option>
                     </select>
                 </div>
             </div><br>
 
             <input type="submit" name="inscriSubmit" id="inscriSubmit" class="btn btn-info center-block" value="Modifier">
-            
+
         </form>
     </div>
 </div>
 
-<?php 
-    
+<?php
+
     //header('Location:gestion_membre');
-} 
+}
 
 
 
@@ -169,7 +169,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
             <th>Pseudo</th>
             <th>Civilité</th>
             <th>Nom</th>
-            <th>Prénom</th> 
+            <th>Prénom</th>
             <th>Email</th>
             <th>Téléphone</th>
             <th>Date Enregistrement</th>
@@ -178,7 +178,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
         </tr>
 
 
-        <?php 
+        <?php
 
         for ($i=0; $i<$req->rowCount(); $i++){
 
@@ -193,7 +193,7 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
             echo'<td>'.$donnees[$i]['statut'].'</td>';
             echo'<td><a href="gestion_membre.php?action=recherche&id='.$donnees[$i]['id_membre'].'"><span class="glyphicon glyphicon-search">&nbsp;</span></a><a href="gestion_membre.php?action=modification&id='.$donnees[$i]['id_membre'].'"><span class="glyphicon glyphicon-edit">&nbsp;</span></a><a href="gestion_membre.php?action=suppression&id='.$donnees[$i]['id_membre'].'"><span class="glyphicon glyphicon-trash"></span></a></td>';
             echo '<tr>';
-        } 
+        }
 
 
 
@@ -207,4 +207,3 @@ if(isset($_GET['action']) && $_GET['action']=="modification"){
 <?php
 require_once('footer.php');
 ?>
-

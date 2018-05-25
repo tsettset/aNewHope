@@ -69,7 +69,7 @@ if(isset($_POST['inscriSubmit'])){
     $req->bindValue(':telephone', $_POST['telephone'], PDO::PARAM_STR);
     $req->bindValue(':email', $_POST['email'], PDO::PARAM_STR);
     $req->bindValue(':civilite', $_POST['civilite'], PDO::PARAM_STR);
-    $req->bindValue(':statut', 'membre', PDO::PARAM_INT);
+    $req->bindValue(':statut', 0, PDO::PARAM_INT);
     $req->execute();
 
   }
