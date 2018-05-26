@@ -60,7 +60,7 @@ if (isset($_POST) && !empty($_POST)){
   $check = checkAnnonce($check, $_POST, $files);//on envoie le tout a checkannonce qui nettoie et valide les donnees
 }
 
-if ($check['valide'] == 1){//si on est valide on procede a l'upload des photos et l'insert dans la bdd
+if ($check['valide'] == 1){ //si on est valide on procede a l'upload des photos et l'insert dans la bdd
   $photos_bdd = array();
   if(isset($check['photo'])){
     for ($i=0; $i < 6; $i++ ){
@@ -196,6 +196,7 @@ function ShowForm($check){?>
       echo '<p>';
       echo '<h4>Votre annonce a bien ete publiee !</h4>';
       echo '<ul>';
+
       echo '<li><a href="annonce.php?id='.$check['id_annonce'].'" title="fiche annonce">Consulter la fiche de l\'annonce.</a></li>';
       echo '<li><a href="fannonce.php?action=m&annonce='.$check['id_annonce'].'" title="modifier l\'annonce">Modifier l\'annonce.</a></li>';
       echo '</ul>';

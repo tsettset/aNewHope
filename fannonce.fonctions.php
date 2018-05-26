@@ -85,7 +85,8 @@ function insertionAnnonce($check, $photos){//Envoi vers la bdd - retourne l'id_a
     } catch (Exception $e) {
       echo 'Exception reçue : ',  $e->getMessage(), "<br>";
     }
-    return (isset($id_annonce)) ? $id_annonce : 0;
+    // return (isset($id_annonce)) ? $id_annonce : 0;
+    return $bdd->lastInsertId();
   }
 
   function modifAnnonce($check, $photos_bdd){
